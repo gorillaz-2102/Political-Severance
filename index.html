@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Attribution de Fonctions</title>
+  <style>
+    body { font-family: sans-serif; }
+    .fonction { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; width: 300px; }
+    input[type="text"] { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Liste des fonctions</h1>
+  <div id="fonctions"></div>
+
+  <script>
+    const fonctions = [
+      { nom: "Président", personne: null, propositions: ["Juan Branco", "Dominique de Villepin", "Jean-Luc Mélenchon"] },
+      { nom: "1er Ministre", personne: null, propositions: ["David Guiraud", "Henri d'Anselme", "Dominique de Villepin"] },
+      { nom: "Garde des sceaux", personne: null, propositions: ["Alexis Corbiére", "Hugo", "Isabelle"] },
+      { nom: "Ministre de la Culture", personne: null, propositions: ["Xavier Mathieu", "Edgar Morin", "Chloé"] },
+       { nom: "Ministre de l'Écologie", personne: null, propositions: ["Hugo Clément", "Lamya Essemlali", "Delphine Batho"] },
+       { nom: "Ministre de l'Industrie", personne: null, propositions: ["Jean Marc Jancovici", "Arnaud Montebourg", "Philippe Poutou"] },
+       { nom: "Ministre des Armées", personne: null, propositions: ["Général de Villiers", "Antoine Léaument", "Chloé"] },
+      
+    ];
+
+    function afficherFonctions() {
+      const container = document.getElementById('fonctions');
+      container.innerHTML = '';
+
+      fonctions.forEach((f, index) => {
+        const div = document.createElement('div');
+        div.className = 'fonction';
+
+        const info = f.personne ? `${f.nom} : ${f.personne}` : `${f.nom} : (libre)`;
+        div.innerHTML = `<strong>${info}</strong><br><br>`;
+
+        if (!f.personne) {
+          // Menu de sélection
+          const select = document.createElement('select');
+          const optionVide = document.createElement('option');
+          optionVide.textContent = "-- Choisir une personne --";
+          optionVide.value = "";
+          select.appendChild(optionVide);
+
+          f.propositions.forEach(p => {
+            const option = document.createElement('option');
+            option.value = p;
+            option.textContent = p;
+            select.appendChild(option);
+          });
+
+          select.onchange = () => {
+            if (select.value) {
+              f.personne = select.value;
+              afficherFonctions();
+            }
+          };
+
+          // Champ pour ajouter un nouveau nom
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Ajouter un nom";
+
+          const boutonAjouter = document.createElement('button');
+          boutonAjouter.textContent = "Ajouter";
+          boutonAjouter.onclick = () => {
+            const nouveauNom = input.value.trim();
+            if (nouveauNom && !f.propositions.includes(nouveauNom)) {
+              f.propositions.push(nouveauNom);
+              input.value = "";
+              afficherFonctions();
+            }
+          };
+
+          div.appendChild(select);
+          div.appendChild(document.createElement('br'));
+          div.appendChild(document.createElement('br'));
+          div.appendChild(input);
+          div.appendChild(boutonAjouter);
+        } else {
+          const boutonLiberer = document.createElement('button');
+          boutonLiberer.textContent = "Libérer";
+          boutonLiberer.onclick = () => {
+            f.personne = null;
+            afficherFonctions();
+          };
+          div.appendChild(boutonLiberer);
+        }
+
+        container.appendChild(div);
+      });
+    }
+
+    afficherFonctions();
+  </script>
+</body>
+</html>
