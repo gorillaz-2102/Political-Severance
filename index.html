@@ -132,190 +132,242 @@
   </div>
 
   <script>
-const fonctions = [
-  { nom: "Président de la République", personne: null },
-  { nom: "Premier Ministre", personne: null },
-  { nom: "Intérieur", personne: null },
-  { nom: "Transition écologique et solidaire", personne: null },
-  { nom: "Justice", personne: null },
-  { nom: "Europe et aff. étrangères", personne: null },
-  { nom: "Armées", personne: null },
-  { nom: "Cohésion des territoires", personne: null },
-  { nom: "Solidarités & Santé", personne: null },
-  { nom: "Economie & Finances", personne: null },
-  { nom: "Culture", personne: null },
-  { nom: "Travail", personne: null },
-  { nom: "Education Nationale", personne: null },
-  { nom: "Agriculture & Alimentation", personne: null },
-  { nom: "Action & Comptes Publics", personne: null },
-  { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
-  { nom: "Outre-mer", personne: null },
-  { nom: "Sports", personne: null },
-  { nom: "Secrétariat d'État Egalité H/F", personne: null },
-];
+  const fonctions = [
+    { nom: "Président de la République", personne: null },
+    { nom: "Premier Ministre", personne: null },
+    { nom: "Intérieur", personne: null },
+    { nom: "Transition écologique et solidaire", personne: null },
+    { nom: "Justice", personne: null },
+    { nom: "Europe et aff. étrangères", personne: null },
+    { nom: "Armées", personne: null },
+    { nom: "Cohésion des territoires", personne: null },
+    { nom: "Solidarités & Santé", personne: null },
+    { nom: "Economie & Finances", personne: null },
+    { nom: "Culture", personne: null },
+    { nom: "Travail", personne: null },
+    { nom: "Education Nationale", personne: null },
+    { nom: "Agriculture & Alimentation", personne: null },
+    { nom: "Action & Comptes Publics", personne: null },
+    { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
+    { nom: "Outre-mer", personne: null },
+    { nom: "Sports", personne: null },
+    { nom: "Secrétariat d'État Egalité H/F", personne: null },
+  ];
 
-function afficherFonctions() {
-  const containerTop = document.getElementById('fonctions');
-  const containerBottom = document.getElementById('fonctions-ministeres');
-  containerTop.innerHTML = '';
-  containerBottom.innerHTML = '';
+  function afficherFonctions() {
+    const containerTop = document.getElementById('fonctions');
+    const containerBottom = document.getElementById('fonctions-ministeres');
+    containerTop.innerHTML = '';
+    containerBottom.innerHTML = '';
 
-  fonctions.forEach((f, index) => {
-    const div = document.createElement('div');
-    div.className = 'fonction';
-    div.classList.add(index < 2 ? 'large' : 'small');
+    fonctions.forEach((f, index) => {
+      const div = document.createElement('div');
+      div.className = 'fonction';
+      div.classList.add(index < 2 ? 'large' : 'small');
 
-    const infoDiv = document.createElement('div');
-    infoDiv.className = 'info';
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'info';
 
-    const titre = document.createElement('div');
-    titre.className = 'titre';
-    titre.textContent = f.nom;
-    infoDiv.appendChild(titre);
+      const titre = document.createElement('div');
+      titre.className = 'titre';
+      titre.textContent = f.nom;
+      infoDiv.appendChild(titre);
 
-    const imageDiv = document.createElement('div');
-    imageDiv.className = 'image-zone';
+      const imageDiv = document.createElement('div');
+      imageDiv.className = 'image-zone';
 
-    if (f.personne) {
-      const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
-      const nomLink = document.createElement('a');
-      nomLink.className = 'nom-personne';
-      nomLink.href = wikiUrl;
-      nomLink.target = "_blank";
-      nomLink.textContent = f.personne.nom;
-      infoDiv.appendChild(nomLink);
+      if (f.personne) {
+        const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
+        const nomLink = document.createElement('a');
+        nomLink.className = 'nom-personne';
+        nomLink.href = wikiUrl;
+        nomLink.target = "_blank";
+        nomLink.textContent = f.personne.nom;
+        infoDiv.appendChild(nomLink);
 
-      const boutonChanger = document.createElement('button');
-      boutonChanger.textContent = "Changer";
-      boutonChanger.onclick = () => {
-        f.personne = null;
-        afficherFonctions();
-      };
-      infoDiv.appendChild(boutonChanger);
+        const boutonChanger = document.createElement('button');
+        boutonChanger.textContent = "Changer";
+        boutonChanger.onclick = () => {
+          f.personne = null;
+          afficherFonctions();
+        };
+        infoDiv.appendChild(boutonChanger);
 
-      if (f.personne.image) {
-        const img = document.createElement('img');
-        img.src = f.personne.image;
-        img.alt = f.personne.nom;
-        img.onload = () => imageDiv.classList.add('loaded');
-        imageDiv.innerHTML = "";
-        imageDiv.appendChild(img);
+        if (f.personne.image) {
+          const img = document.createElement('img');
+          img.src = f.personne.image;
+          img.alt = f.personne.nom;
+          img.onload = () => imageDiv.classList.add('loaded');
+          imageDiv.innerHTML = "";
+          imageDiv.appendChild(img);
+        } else {
+          imageDiv.innerHTML = "<span>?</span>";
+        }
       } else {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = "Ajouter un nom";
+        input.autocomplete = "off";
+
+        const boutonRecruter = document.createElement('button');
+        boutonRecruter.textContent = "Choisir";
+        boutonRecruter.disabled = true;
+
+        const suggestions = document.getElementById('suggestions');
+
+        input.addEventListener("input", async () => {
+          const query = input.value.trim();
+          suggestions.innerHTML = "";
+          boutonRecruter.disabled = true;
+          if (query.length < 2) return;
+
+          async function rechercherWiki(lang, query) {
+            const res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
+            const data = await res.json();
+            return data.query ? Object.values(data.query.pages) : [];
+          }
+
+          async function chercherImageWikidata(qid) {
+            const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
+            const data = await res.json();
+            const claims = data.entities[qid].claims;
+            const imageClaim = claims && claims.P18 ? claims.P18[0].mainsnak.datavalue.value : null;
+
+            if (imageClaim) {
+              const filename = imageClaim.replace(/ /g, '_');
+              const md5 = await crypto.subtle.digest('MD5', new TextEncoder().encode(filename));
+              const hashArray = Array.from(new Uint8Array(md5)).map(b => b.toString(16).padStart(2, '0'));
+              const hash = hashArray.join('');
+              return `https://upload.wikimedia.org/wikipedia/commons/${hash[0]}/${hash.slice(0,2)}/${filename}`;
+            }
+            return null;
+          }
+
+          const allPages = await rechercherWiki("fr", query);
+          const pages = allPages.length > 0 ? allPages : await rechercherWiki("en", query);
+
+          for (const page of pages) {
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            span.textContent = page.title;
+
+            let imgSrc = page.thumbnail ? page.thumbnail.source : "";
+
+            if (!imgSrc || imgSrc.includes("No_image") || imgSrc.includes("Image_not_available")) {
+              const qid = page.pageprops ? page.pageprops.wikibase_item : null;
+              if (qid) {
+                imgSrc = await chercherImageWikidata(qid) || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
+              }
+            }
+
+            const img = document.createElement("img");
+            img.src = imgSrc;
+            img.alt = "";
+            img.style.width = "30px";
+            img.style.height = "30px";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "50%";
+            img.style.marginRight = "10px";
+
+            li.appendChild(img);
+            li.appendChild(span);
+
+            li.onclick = () => {
+              f.personne = {
+                nom: page.title,
+                image: img.src
+              };
+              suggestions.innerHTML = "";
+              afficherFonctions();
+            };
+
+            suggestions.appendChild(li);
+          }
+
+          const rect = input.getBoundingClientRect();
+          suggestions.style.left = rect.left + "px";
+          suggestions.style.top = (window.scrollY + rect.bottom) + "px";
+          suggestions.style.width = rect.width + "px";
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!suggestions.contains(e.target) && e.target !== input) {
+            suggestions.innerHTML = "";
+          }
+        });
+
+        infoDiv.appendChild(input);
+        infoDiv.appendChild(boutonRecruter);
         imageDiv.innerHTML = "<span>?</span>";
       }
-    } else {
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = "Ajouter un nom";
-      input.autocomplete = "off";
 
-      const bouton = document.createElement('button');
-      bouton.textContent = "OK";
-      bouton.disabled = true;
+      div.appendChild(infoDiv);
+      div.appendChild(imageDiv);
 
-      input.addEventListener('input', async () => {
-        bouton.disabled = input.value.trim().length < 2;
-      });
-
-      bouton.onclick = async () => {
-        const nom = input.value.trim();
-        const wiki = await chercherWikipedia(nom);
-        f.personne = {
-          nom: nom,
-          image: wiki.image
-        };
-        afficherFonctions();
-      };
-
-      infoDiv.appendChild(input);
-      infoDiv.appendChild(bouton);
-      imageDiv.innerHTML = "<span>?</span>";
-    }
-
-    div.appendChild(infoDiv);
-    div.appendChild(imageDiv);
-
-    if (index < 2) {
-      containerTop.appendChild(div);
-    } else {
-      containerBottom.appendChild(div);
-    }
-  });
-
-  afficherBoutonValidation();
-}
-
-async function chercherWikipedia(nom) {
-  const pageName = encodeURIComponent(nom);
-  const url = `https://fr.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=200&titles=${pageName}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const pages = data.query.pages;
-  const page = Object.values(pages)[0];
-  const image = page?.thumbnail?.source || "";
-  return { image };
-}
-
-function afficherBoutonValidation() {
-  let boutonValider = document.getElementById("valider-gouvernement");
-  if (!boutonValider) {
-    boutonValider = document.createElement("button");
-    boutonValider.id = "valider-gouvernement";
-    boutonValider.textContent = "Valider le gouvernement";
-    boutonValider.style.display = "block";
-    boutonValider.style.margin = "40px auto";
-    boutonValider.style.padding = "10px 20px";
-    boutonValider.style.fontSize = "1em";
-    document.querySelector(".container").appendChild(boutonValider);
-    boutonValider.onclick = afficherStats;
-  }
-}
-
-function afficherStats() {
-  const map = new Map();
-
-  fonctions.forEach(f => {
-    if (f.personne) {
-      const nom = f.personne.nom;
-      if (!map.has(nom)) {
-        map.set(nom, []);
+      if (index < 2) {
+        containerTop.appendChild(div);
+      } else {
+        containerBottom.appendChild(div);
       }
-      map.get(nom).push(f.nom);
-    }
-  });
-
-  const doublons = Array.from(map.entries()).filter(([_, postes]) => postes.length > 1);
-
-  let tableau = document.getElementById("stats-gouvernement");
-  if (tableau) tableau.remove();
-
-  if (doublons.length > 0) {
-    tableau = document.createElement("table");
-    tableau.id = "stats-gouvernement";
-    tableau.style.margin = "40px auto";
-    tableau.style.borderCollapse = "collapse";
-    tableau.style.width = "80%";
-
-    const thead = document.createElement("thead");
-    thead.innerHTML = "<tr><th>Nom</th><th>Nombre de postes</th><th>Postes</th></tr>";
-    tableau.appendChild(thead);
-
-    const tbody = document.createElement("tbody");
-
-    doublons.forEach(([nom, postes]) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${nom}</td><td>${postes.length}</td><td>${postes.join(", ")}</td>`;
-      tbody.appendChild(tr);
     });
 
-    tableau.appendChild(tbody);
-    document.querySelector(".container").appendChild(tableau);
-  } else {
-    alert("Aucune personne sélectionnée plusieurs fois.");
+    // Ajouter bouton valider s'il n'existe pas
+    if (!document.getElementById("btn-valider")) {
+      const btn = document.createElement("button");
+      btn.id = "btn-valider";
+      btn.textContent = "Valider le gouvernement";
+      btn.style.display = "block";
+      btn.style.margin = "30px auto";
+      btn.onclick = afficherDoublons;
+      document.body.appendChild(btn);
+    }
   }
-}
 
-afficherFonctions();
+  function afficherDoublons() {
+    // Nettoyer ancien tableau
+    const ancienTableau = document.getElementById("tableau-doublons");
+    if (ancienTableau) ancienTableau.remove();
+
+    const map = new Map();
+
+    fonctions.forEach(f => {
+      if (f.personne) {
+        const nom = f.personne.nom;
+        if (!map.has(nom)) map.set(nom, []);
+        map.get(nom).push(f.nom);
+      }
+    });
+
+    const doublons = [...map.entries()].filter(([_, postes]) => postes.length > 1);
+    if (doublons.length === 0) return;
+
+    const table = document.createElement("table");
+    table.id = "tableau-doublons";
+
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    ["Nom", "Postes"].forEach(texte => {
+      const th = document.createElement("th");
+      th.textContent = texte;
+      headerRow.appendChild(th);
+    });
+
+    const tbody = table.createTBody();
+
+    doublons.forEach(([nom, postes]) => {
+      const row = tbody.insertRow();
+      const cellNom = row.insertCell();
+      cellNom.textContent = nom;
+
+      const cellPostes = row.insertCell();
+      cellPostes.textContent = postes.join(", ");
+    });
+
+    document.body.appendChild(table);
+  }
+
+  afficherFonctions();
+
 </script>
 </body>
 </html>
