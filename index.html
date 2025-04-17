@@ -32,258 +32,143 @@
   <ul id="suggestions"></ul>
 
   <script>
+    <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gouvernement</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .fonction { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    .info { flex: 1; }
+    .image-zone { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: #eee; border-radius: 50%; overflow: hidden; }
+    .image-zone img { width: 100%; height: auto; }
+    input { padding: 5px; margin-right: 10px; }
+    button { padding: 5px 10px; }
+    #suggestions { position: absolute; background: #fff; border: 1px solid #ccc; list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; z-index: 1000; }
+    #suggestions li { padding: 5px; cursor: pointer; display: flex; align-items: center; }
+    #suggestions li:hover { background: #f0f0f0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Construis ton Gouvernement</h1>
+  <div id="fonctions"></div>
+  <div id="fonctions-ministeres"></div>
+
+  <button id="valider-btn">Valider mon gouvernement</button>
+
+  <div id="stats-container"></div>
+
+  <ul id="suggestions"></ul>
+
+  <script>
     const fonctions = [
-    { nom: "Président de la République", personne: null },
-    { nom: "Premier Ministre", personne: null },
-    { nom: "Intérieur", personne: null },
-    { nom: "Transition écologique et solidaire", personne: null },
-    { nom: "Justice", personne: null },
-    { nom: "Europe et aff. étrangères", personne: null },
-    { nom: "Armées", personne: null },
-    { nom: "Cohésion des territoires", personne: null },
-    { nom: "Solidarités & Santé", personne: null },
-    { nom: "Economie & Finances", personne: null },
-    { nom: "Culture", personne: null },
-    { nom: "Travail", personne: null },
-    { nom: "Education Nationale", personne: null },
-    { nom: "Agriculture & Alimentation", personne: null },
-    { nom: "Action & Comptes Publics", personne: null },
-    { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
-    { nom: "Outre-mer", personne: null },
-    { nom: "Sports", personne: null },
-    { nom: "Secrétariat d'État Egalité H/F", personne: null },
-  ];
+      { nom: "Président de la République", personne: null },
+      { nom: "Premier Ministre", personne: null },
+      { nom: "Intérieur", personne: null },
+      { nom: "Justice", personne: null },
+      { nom: "Culture", personne: null },
+      { nom: "Éducation", personne: null },
+      { nom: "Économie", personne: null },
+    ];
 
-  function afficherFonctions() {
-    const containerTop = document.getElementById('fonctions');
-    const containerBottom = document.getElementById('fonctions-ministeres');
-    containerTop.innerHTML = '';
-    containerBottom.innerHTML = '';
+    function afficherFonctions() {
+      const containerTop = document.getElementById('fonctions');
+      containerTop.innerHTML = '';
+      fonctions.forEach((f, index) => {
+        const div = document.createElement('div');
+        div.className = 'fonction';
 
-    fonctions.forEach((f, index) => {
-      const div = document.createElement('div');
-      div.className = 'fonction';
-      div.classList.add(index < 2 ? 'large' : 'small');
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'info';
 
-      const infoDiv = document.createElement('div');
-      infoDiv.className = 'info';
+        const titre = document.createElement('div');
+        titre.textContent = f.nom;
+        infoDiv.appendChild(titre);
 
-      const titre = document.createElement('div');
-      titre.className = 'titre';
-      titre.textContent = f.nom;
-      infoDiv.appendChild(titre);
+        if (f.personne) {
+          const nomSpan = document.createElement('div');
+          nomSpan.textContent = f.personne.nom;
+          infoDiv.appendChild(nomSpan);
 
-      const imageDiv = document.createElement('div');
-      imageDiv.className = 'image-zone';
-
-      if (f.personne) {
-        const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
-        const nomLink = document.createElement('a');
-        nomLink.className = 'nom-personne';
-        nomLink.href = wikiUrl;
-        nomLink.target = "_blank"; // ouvre dans un nouvel onglet
-        nomLink.textContent = f.personne.nom;
-        infoDiv.appendChild(nomLink);
-
-        const boutonChanger = document.createElement('button');
-        boutonChanger.textContent = "Changer";
-        boutonChanger.onclick = () => {
-          f.personne = null;
-          afficherFonctions();
-        };
-        infoDiv.appendChild(boutonChanger);
-
-        if (f.personne.image) {
-          const img = document.createElement('img');
-          img.src = f.personne.image;
-          img.alt = f.personne.nom;
-          img.onload = () => imageDiv.classList.add('loaded');
-          imageDiv.innerHTML = "";
-          imageDiv.appendChild(img);
-        } else {
-          imageDiv.innerHTML = "<span>?</span>";
-        }
-      } else {
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = "Ajouter un nom";
-        input.autocomplete = "off";
-
-        const boutonRecruter = document.createElement('button');
-        boutonRecruter.textContent = "Changer";
-        boutonRecruter.disabled = true;
-
-        const suggestions = document.getElementById('suggestions');
-
-        input.addEventListener("input", async () => {
-          const query = input.value.trim();
-          suggestions.innerHTML = "";
-          boutonRecruter.disabled = true;
-          if (query.length < 2) return;
-
-          async function rechercherWiki(lang, query) {
-            const res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
-            const data = await res.json();
-            return data.query ? Object.values(data.query.pages) : [];
-          }
-
-          async function chercherImageWikidata(qid) {
-            const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
-            const data = await res.json();
-            const claims = data.entities[qid].claims;
-            const imageClaim = claims && claims.P18 ? claims.P18[0].mainsnak.datavalue.value : null;
-
-            if (imageClaim) {
-              const filename = imageClaim.replace(/ /g, '_');
-              const md5 = await crypto.subtle.digest('MD5', new TextEncoder().encode(filename));
-              const hashArray = Array.from(new Uint8Array(md5)).map(b => b.toString(16).padStart(2, '0'));
-              const hash = hashArray.join('');
-              return `https://upload.wikimedia.org/wikipedia/commons/${hash[0]}/${hash.slice(0,2)}/${filename}`;
-            }
-
-            return null;
-          }
-
-          const allPages = await rechercherWiki("fr", query);
-          const pages = allPages.length > 0 ? allPages : await rechercherWiki("en", query);
-
-          for (const page of pages) {
-            const li = document.createElement("li");
-            const span = document.createElement("span");
-            span.textContent = page.title;
-
-            let imgSrc = page.thumbnail ? page.thumbnail.source : "";
-
-            if (!imgSrc || imgSrc.includes("No_image") || imgSrc.includes("Image_not_available")) {
-              const qid = page.pageprops ? page.pageprops.wikibase_item : null;
-              if (qid) {
-                imgSrc = await chercherImageWikidata(qid) || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
-              }
-            }
-
-            const img = document.createElement("img");
-            img.src = imgSrc;
-            img.alt = "";
-            img.style.width = "30px";
-            img.style.height = "30px";
-            img.style.objectFit = "cover";
-            img.style.borderRadius = "50%";
-            img.style.marginRight = "10px";
-
-            li.appendChild(img);
-            li.appendChild(span);
-
-            li.onclick = () => {
-              f.personne = {
-                nom: page.title,
-                image: img.src
-              };
-              suggestions.innerHTML = "";
-              afficherFonctions();
-            };
-
-            suggestions.appendChild(li);
-          }
-
-          const rect = input.getBoundingClientRect();
-          suggestions.style.left = rect.left + "px";
-          suggestions.style.top = (window.scrollY + rect.bottom) + "px";
-          suggestions.style.width = rect.width + "px";
-        });
-
-        document.addEventListener("click", (e) => {
-          if (!suggestions.contains(e.target) && e.target !== input) {
-            suggestions.innerHTML = "";
-          }
-        });
-
-        infoDiv.appendChild(input);
-        infoDiv.appendChild(boutonRecruter);
-        imageDiv.innerHTML = "<span>?</span>";
-      }
-
-      div.appendChild(infoDiv);
-      div.appendChild(imageDiv);
-
-      if (index < 2) {
-        containerTop.appendChild(div);
-      } else {
-        containerBottom.appendChild(div);
-      }
-    });
-  }
-
-  // Fonction pour afficher les statistiques
-  function genererTableauStats() {
-    const stats = {};
-
-    fonctions.forEach(f => {
-      if (f.personne) {
-        const nom = f.personne.nom;
-        if (!stats[nom]) {
-          stats[nom] = {
-            count: 0,
-            postes: []
+          const changerBtn = document.createElement('button');
+          changerBtn.textContent = "Changer";
+          changerBtn.onclick = () => {
+            f.personne = null;
+            afficherFonctions();
           };
+          infoDiv.appendChild(changerBtn);
+        } else {
+          const input = document.createElement('input');
+          input.placeholder = "Nom...";
+          infoDiv.appendChild(input);
+
+          const bouton = document.createElement('button');
+          bouton.textContent = "Choisir";
+          bouton.onclick = () => {
+            if (input.value.trim()) {
+              f.personne = { nom: input.value.trim() };
+              afficherFonctions();
+            }
+          };
+          infoDiv.appendChild(bouton);
         }
-        stats[nom].count += 1;
-        stats[nom].postes.push(f.nom);
-      }
-    });
 
-    const filteredStats = Object.entries(stats).filter(([_, data]) => data.count >= 2);
-    if (filteredStats.length === 0) return;
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
+        imageDiv.innerHTML = f.personne ? `<span>${f.personne.nom[0]}</span>` : '<span>?</span>';
 
-    const container = document.getElementById('stats-container');
-    container.innerHTML = ""; // On vide avant de reconstruire
+        div.appendChild(infoDiv);
+        div.appendChild(imageDiv);
 
-    const title = document.createElement('h2');
-    title.textContent = "Statistiques des personnes sélectionnées plusieurs fois";
-    container.appendChild(title);
-
-    const table = document.createElement('table');
-    table.style.borderCollapse = 'collapse';
-    table.style.width = '100%';
-    table.style.marginTop = '10px';
-
-    const headerRow = table.insertRow();
-    ['Nom', 'Nombre de sélections', 'Postes'].forEach(text => {
-      const th = document.createElement('th');
-      th.textContent = text;
-      th.style.border = '1px solid #ccc';
-      th.style.padding = '8px';
-      th.style.backgroundColor = '#f0f0f0';
-      headerRow.appendChild(th);
-    });
-
-    filteredStats.forEach(([nom, data]) => {
-      const row = table.insertRow();
-      const cellNom = row.insertCell();
-      cellNom.textContent = nom;
-
-      const cellCount = row.insertCell();
-      cellCount.textContent = data.count;
-
-      const cellPostes = row.insertCell();
-      cellPostes.textContent = data.postes.join(", ");
-
-      [cellNom, cellCount, cellPostes].forEach(cell => {
-        cell.style.border = '1px solid #ccc';
-        cell.style.padding = '8px';
+        containerTop.appendChild(div);
       });
-    });
+    }
 
-    container.appendChild(table);
-  }
+    function genererTableauStats() {
+      const stats = {};
+      fonctions.forEach(f => {
+        if (f.personne) {
+          const nom = f.personne.nom;
+          if (!stats[nom]) {
+            stats[nom] = { count: 0, postes: [] };
+          }
+          stats[nom].count++;
+          stats[nom].postes.push(f.nom);
+        }
+      });
 
-  document.getElementById('valider-btn').addEventListener('click', () => {
-    genererTableauStats();
-  });
+      const resultats = Object.entries(stats).filter(([_, data]) => data.count > 1);
 
-  afficherFonctions();
-  
+      const statsContainer = document.getElementById('stats-container');
+      statsContainer.innerHTML = '';
 
+      if (resultats.length === 0) return;
 
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th>Nom</th><th>Occurrences</th><th>Postes</th></tr>';
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      resultats.forEach(([nom, data]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${nom}</td><td>${data.count}</td><td>${data.postes.join(', ')}</td>`;
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      statsContainer.appendChild(table);
+    }
+
+    document.getElementById('valider-btn').addEventListener('click', genererTableauStats);
+
+    afficherFonctions();
   </script>
 </body>
 </html>
+
