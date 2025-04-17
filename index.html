@@ -5,14 +5,23 @@
   <title>Attribution de Fonctions</title>
   <style>
     body { font-family: sans-serif; }
-    .fonction { margin-bottom: 20px; padding: 10px; border: 1px solid #45a049; border-radius: 8px; width: 300px; }
-    input[type="text"] { margin-right: 5px; }
+    .fonction {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #45a049;
+      border-radius: 8px;
+      width: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    input[type="text"] {
+      margin-right: 5px;
+    }
 
-  /*Style de la liste de suggestion*/
-  #suggestions li:hover {
-  background-color: #f0f0f0;
-  }
-
+    #suggestions li:hover {
+      background-color: #f0f0f0;
+    }
   </style>
 </head>
 <body>
@@ -22,14 +31,14 @@
 
   <script>
     const fonctions = [
-      { nom: "Président", personne: null, propositions: ["Juan Branco", "Dominique de Villepin", "Jean-Luc Mélenchon"] },
-      { nom: "1er Ministre", personne: null, propositions: ["David Guiraud", "Henri d'Anselme", "Dominique de Villepin"] },
-      { nom: "Garde des sceaux", personne: null, propositions: ["Alexis Corbiére", "Hugo", "Isabelle"] },
-      { nom: "Ministre de la Culture", personne: null, propositions: ["Xavier Mathieu", "Edgar Morin", "Chloé"] },
-       { nom: "Ministre de l'Écologie", personne: null, propositions: ["Hugo Clément", "Lamya Essemlali", "Delphine Batho"] },
-       { nom: "Ministre de l'Industrie", personne: null, propositions: ["Jean Marc Jancovici", "Arnaud Montebourg", "Philippe Poutou"] },
-       { nom: "Ministre des Armées", personne: null, propositions: ["Général de Villiers", "Antoine Léaument", "Chloé"] },
-       { nom: "Ministre de l'Education Nationale", personne: null, propositions: ["Sandrine Rousseau", "Céline Alvarez", "Louis Boyard"] },
+      { nom: "Président", personne: null },
+      { nom: "1er Ministre", personne: null },
+      { nom: "Garde des sceaux", personne: null },
+      { nom: "Ministre de la Culture", personne: null },
+      { nom: "Ministre de l'Écologie", personne: null },
+      { nom: "Ministre de l'Industrie", personne: null },
+      { nom: "Ministre des Armées", personne: null },
+      { nom: "Ministre de l'Éducation Nationale", personne: null },
     ];
 
     function afficherFonctions() {
@@ -40,81 +49,54 @@
         const div = document.createElement('div');
         div.className = 'fonction';
 
-        const info = f.personne ? `${f.nom} : ${f.personne}` : `${f.nom} : (libre)`;
-        div.innerHTML = `<strong>${info}</strong><br><br>`;
+        const infoDiv = document.createElement('div');
+        infoDiv.style.flex = '1';
+
+        const imageDiv = document.createElement('div');
+        imageDiv.style.width = '60px';
+        imageDiv.style.height = '60px';
+        imageDiv.style.backgroundColor = '#eee';
+        imageDiv.style.display = 'flex';
+        imageDiv.style.alignItems = 'center';
+        imageDiv.style.justifyContent = 'center';
+        imageDiv.style.borderRadius = '8px';
+        imageDiv.style.marginLeft = '10px';
+        imageDiv.style.flexShrink = '0';
+
+        const titre = document.createElement('strong');
+        titre.textContent = f.personne ? `${f.nom} : ${f.personne.nom}` : `${f.nom} : (libre)`;
+
+        infoDiv.appendChild(titre);
+        infoDiv.appendChild(document.createElement('br'));
+        infoDiv.appendChild(document.createElement('br'));
 
         if (!f.personne) {
-          // Menu de sélection
-          const select = document.createElement('select');
-          const optionVide = document.createElement('option');
-          optionVide.textContent = "-- Choisir une personne --";
-          optionVide.value = "";
-          select.appendChild(optionVide);
-
-          f.propositions.forEach(p => {
-            const option = document.createElement('option');
-            option.value = p;
-            option.textContent = p;
-            select.appendChild(option);
-          });
-
-          select.onchange = () => {
-            if (select.value) {
-              f.personne = select.value;
-              afficherFonctions();
-            }
-          };
-/*
-          // Champ pour ajouter un nouveau nom
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.placeholder = "Ajouter un nom";
-
-          const boutonAjouter = document.createElement('button');
-          boutonAjouter.textContent = "Ajouter";
-          boutonAjouter.onclick = () => {
-            const nouveauNom = input.value.trim();
-            if (nouveauNom && !f.propositions.includes(nouveauNom)) {
-              f.propositions.push(nouveauNom);
-              input.value = "";
-              afficherFonctions();
-            }
-          };
-*/
-
-
-
-
-
-
-
-          
-          // Champ pour ajouter un nouveau nom avec suggestions
+          // Champ recherche + suggestions
           const input = document.createElement('input');
           input.type = 'text';
           input.placeholder = "Ajouter un nom";
           input.autocomplete = "off";
-          
+
           const suggestions = document.getElementById('suggestions');
-          
+
           input.addEventListener("input", async () => {
             const query = input.value.trim();
             suggestions.innerHTML = "";
             if (query.length < 2) return;
-          
-            const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages&piprop=thumbnail&pithumbsize=50&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
+
+            const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages&piprop=thumbnail&pithumbsize=80&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
             const data = await res.json();
             if (!data.query) return;
-          
+
             const pages = Object.values(data.query.pages);
-          
+
             pages.forEach(page => {
               const li = document.createElement("li");
               li.style.display = "flex";
               li.style.alignItems = "center";
               li.style.padding = "5px";
               li.style.cursor = "pointer";
-          
+
               const img = document.createElement("img");
               img.src = page.thumbnail ? page.thumbnail.source : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
               img.alt = "";
@@ -123,52 +105,49 @@
               img.style.height = "30px";
               img.style.objectFit = "cover";
               img.style.borderRadius = "50%";
-          
+
               const span = document.createElement("span");
               span.textContent = page.title;
-          
+
               li.appendChild(img);
               li.appendChild(span);
-          
+
               li.onclick = () => {
                 input.value = page.title;
+                input.dataset.image = page.thumbnail ? page.thumbnail.source : "";
                 suggestions.innerHTML = "";
               };
-          
+
               suggestions.appendChild(li);
             });
-          
+
             const rect = input.getBoundingClientRect();
             suggestions.style.left = rect.left + "px";
             suggestions.style.top = (window.scrollY + rect.bottom) + "px";
             suggestions.style.width = rect.width + "px";
           });
-          
+
           document.addEventListener("click", (e) => {
             if (!suggestions.contains(e.target) && e.target !== input) {
               suggestions.innerHTML = "";
             }
           });
-          
+
           const boutonAjouter = document.createElement('button');
           boutonAjouter.textContent = "Ajouter";
           boutonAjouter.onclick = () => {
-            const nouveauNom = input.value.trim();
-            if (nouveauNom && !f.propositions.includes(nouveauNom)) {
-              f.propositions.push(nouveauNom);
-              input.value = "";
-              suggestions.innerHTML = "";
-              afficherFonctions();
-            }
+            const nom = input.value.trim();
+            if (!nom) return;
+
+            f.personne = {
+              nom: nom,
+              image: input.dataset.image || null
+            };
+            afficherFonctions();
           };
 
-
-          
-          div.appendChild(select);
-          div.appendChild(document.createElement('br'));
-          div.appendChild(document.createElement('br'));
-          div.appendChild(input);
-          div.appendChild(boutonAjouter);
+          infoDiv.appendChild(input);
+          infoDiv.appendChild(boutonAjouter);
         } else {
           const boutonLiberer = document.createElement('button');
           boutonLiberer.textContent = "Libérer";
@@ -176,9 +155,29 @@
             f.personne = null;
             afficherFonctions();
           };
-          div.appendChild(boutonLiberer);
+          infoDiv.appendChild(document.createElement('br'));
+          infoDiv.appendChild(boutonLiberer);
         }
 
+        // Affichage image ou ?
+        if (f.personne && f.personne.image) {
+          const img = document.createElement('img');
+          img.src = f.personne.image;
+          img.alt = f.personne.nom;
+          img.style.width = "60px";
+          img.style.height = "60px";
+          img.style.objectFit = "cover";
+          img.style.borderRadius = "8px";
+          imageDiv.innerHTML = "";
+          imageDiv.appendChild(img);
+        } else {
+          imageDiv.textContent = "?";
+          imageDiv.style.fontSize = "24px";
+          imageDiv.style.color = "#666";
+        }
+
+        div.appendChild(infoDiv);
+        div.appendChild(imageDiv);
         container.appendChild(div);
       });
     }
