@@ -246,10 +246,14 @@
         imageDiv.className = 'image-zone';
 
         if (f.personne) {
-          const nomDiv = document.createElement('div');
-          nomDiv.className = 'nom-personne';
-          nomDiv.textContent = f.personne.nom;
-          infoDiv.appendChild(nomDiv);
+         const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
+         const nomLink = document.createElement('a');
+         nomLink.className = 'nom-personne';
+         nomLink.href = wikiUrl;
+         nomLink.target = "_blank"; // ouvre dans un nouvel onglet
+         nomLink.textContent = f.personne.nom;
+         infoDiv.appendChild(nomLink);
+
 
           const boutonChanger = document.createElement('button');
           boutonChanger.textContent = "Changer";
