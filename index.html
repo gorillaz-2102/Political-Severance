@@ -2,358 +2,323 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mon Gouvernement Idéal</title>
+  <title>Créer son Gouvernement</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
-
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #f6f6f6;
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 30px 0;
+      color: #333;
     }
 
     .container {
-      max-width: 1000px;
-      margin: 0 auto;
+      max-width: 1200px;
+      margin: auto;
       padding: 20px;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2em;
-    }
-
-    header p {
-      font-size: 0.9em;
-      color: #666;
-      margin-top: 10px;
-    }
-
-    .separateur {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 30px 0;
-    }
-
-    .separateur::before,
-    .separateur::after {
-      content: "";
-      flex: 1;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .separateur:not(:empty)::before {
-      margin-right: 10px;
-    }
-
-    .separateur:not(:empty)::after {
-      margin-left: 10px;
-    }
-
-    .separateur span {
-      color: #888;
-      font-weight: bold;
-      font-size: 0.9em;
-      text-transform: uppercase;
-    }
-
-    #fonctions,
-    #fonctions-ministeres {
+    #fonctions, #fonctions-ministeres {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 20px;
+      justify-content: center;
     }
 
     .fonction {
-      display: flex;
-      height: 140px;
-      border: 1px solid #45a049;
-      border-radius: 8px;
-      overflow: hidden;
-      background: white;
-    }
-
-    .fonction.large {
-      width: 360px;
-    }
-
-    .fonction.small {
-      width: 310px;
-    }
-
-    .info {
-      flex: 1;
-      padding: 10px;
-      box-sizing: border-box;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      width: 250px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    .titre {
-      font-weight: bold;
-      font-size: 0.9em;
+    .fonction.large {
+      width: 100%;
     }
 
-    .nom-personne {
-      color: #002366;
-      font-size: 1.6em;
+    .info {
+      margin-bottom: 10px;
+    }
+
+    .titre {
       font-weight: bold;
-      font-family: 'Roboto Condensed', sans-serif;
-      line-height: 1em;
-      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      padding: 6px;
+      width: 100%;
       margin-bottom: 6px;
     }
 
-    .image-zone {
-      width: 120px;
-      height: 100%;
-      background-color: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .image-zone img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transform: translateX(15px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    .image-zone.loaded img {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .valider-container {
-      text-align: center;
-      margin: 40px 0;
-    }
-
-    .valider-container button {
-      font-size: 1.2em;
-      padding: 10px 20px;
-      background-color: #45a049;
+    button {
+      padding: 6px 12px;
+      margin-top: 6px;
+      background-color: #007BFF;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
     }
 
-    .valider-container button:hover {
-      background-color: #388e3c;
+    button:disabled {
+      background-color: #ccc;
     }
 
-    #tableau-stats {
-      margin-top: 30px;
-      border-collapse: collapse;
+    .image-zone {
       width: 100%;
+      height: 180px;
+      background-color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    #tableau-stats th,
-    #tableau-stats td {
-      border: 1px solid #ccc;
-      padding: 10px;
+    .image-zone img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
       text-align: left;
+      border-bottom: 1px solid #ddd;
     }
 
-    #tableau-stats th {
-      background-color: #f2f2f2;
+    th {
+      background-color: #f1f1f1;
+    }
+
+    .nom-personne {
+      display: block;
+      margin-top: 4px;
+      color: #007BFF;
+      text-decoration: none;
+    }
+
+    .nom-personne:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <h1>Crée ton propre gouvernement</h1>
+
   <div class="container">
-    <header>
-      <h1>Mon Gouvernement Idéal</h1>
-      <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
-    </header>
-
     <div id="fonctions"></div>
-    <div class="separateur"><span>Ministères</span></div>
+    <hr style="margin: 40px 0;">
     <div id="fonctions-ministeres"></div>
-
-    <div class="valider-container">
-      <button onclick="genererTableauStats()">Valider mon gouvernement</button>
-    </div>
-
-    <div id="stats"></div>
   </div>
 
   <script>
-    const fonctions = [
-      { nom: "Président de la République", personne: null },
-      { nom: "Premier Ministre", personne: null },
-      { nom: "Intérieur", personne: null },
-      { nom: "Transition écologique et solidaire", personne: null },
-      { nom: "Justice", personne: null },
-      { nom: "Europe et aff. étrangères", personne: null },
-      { nom: "Armées", personne: null },
-      { nom: "Cohésion des territoires", personne: null },
-      { nom: "Solidarités & Santé", personne: null },
-      { nom: "Economie & Finances", personne: null },
-      { nom: "Culture", personne: null },
-      { nom: "Travail", personne: null },
-      { nom: "Education Nationale", personne: null },
-      { nom: "Agriculture & Alimentation", personne: null },
-      { nom: "Action & Comptes Publics", personne: null },
-      { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
-      { nom: "Outre-mer", personne: null },
-      { nom: "Sports", personne: null },
-      { nom: "Secrétariat d'État Egalité H/F", personne: null },
-    ];
+    <script>
+const fonctions = [
+  { nom: "Président de la République", personne: null },
+  { nom: "Premier Ministre", personne: null },
+  { nom: "Intérieur", personne: null },
+  { nom: "Transition écologique et solidaire", personne: null },
+  { nom: "Justice", personne: null },
+  { nom: "Europe et aff. étrangères", personne: null },
+  { nom: "Armées", personne: null },
+  { nom: "Cohésion des territoires", personne: null },
+  { nom: "Solidarités & Santé", personne: null },
+  { nom: "Economie & Finances", personne: null },
+  { nom: "Culture", personne: null },
+  { nom: "Travail", personne: null },
+  { nom: "Education Nationale", personne: null },
+  { nom: "Agriculture & Alimentation", personne: null },
+  { nom: "Action & Comptes Publics", personne: null },
+  { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
+  { nom: "Outre-mer", personne: null },
+  { nom: "Sports", personne: null },
+  { nom: "Secrétariat d'État Egalité H/F", personne: null },
+];
 
-    function afficherFonctions() {
-      const containerTop = document.getElementById('fonctions');
-      const containerBottom = document.getElementById('fonctions-ministeres');
-      containerTop.innerHTML = '';
-      containerBottom.innerHTML = '';
+function afficherFonctions() {
+  const containerTop = document.getElementById('fonctions');
+  const containerBottom = document.getElementById('fonctions-ministeres');
+  containerTop.innerHTML = '';
+  containerBottom.innerHTML = '';
 
-      fonctions.forEach((f, index) => {
-        const div = document.createElement('div');
-        div.className = 'fonction';
-        div.classList.add(index < 2 ? 'large' : 'small');
+  fonctions.forEach((f, index) => {
+    const div = document.createElement('div');
+    div.className = 'fonction';
+    div.classList.add(index < 2 ? 'large' : 'small');
 
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'info';
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'info';
 
-        const titre = document.createElement('div');
-        titre.className = 'titre';
-        titre.textContent = f.nom;
-        infoDiv.appendChild(titre);
+    const titre = document.createElement('div');
+    titre.className = 'titre';
+    titre.textContent = f.nom;
+    infoDiv.appendChild(titre);
 
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-zone';
+    const imageDiv = document.createElement('div');
+    imageDiv.className = 'image-zone';
 
-        if (f.personne) {
-          const nomLink = document.createElement('span');
-          nomLink.className = 'nom-personne';
-          nomLink.innerHTML = f.personne.lien ? `<a href="${f.personne.lien}" target="_blank">${f.personne.nom}</a>` : f.personne.nom;
-          infoDiv.appendChild(nomLink);
+    if (f.personne) {
+      const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
+      const nomLink = document.createElement('a');
+      nomLink.className = 'nom-personne';
+      nomLink.href = wikiUrl;
+      nomLink.target = "_blank";
+      nomLink.textContent = f.personne.nom;
+      infoDiv.appendChild(nomLink);
 
-          const boutonChanger = document.createElement('button');
-          boutonChanger.textContent = "Changer";
-          boutonChanger.onclick = () => {
-            f.personne = null;
-            afficherFonctions();
-          };
-          infoDiv.appendChild(boutonChanger);
+      const boutonChanger = document.createElement('button');
+      boutonChanger.textContent = "Changer";
+      boutonChanger.onclick = () => {
+        f.personne = null;
+        afficherFonctions();
+      };
+      infoDiv.appendChild(boutonChanger);
 
-          if (f.personne.image) {
-            const img = document.createElement('img');
-            img.src = f.personne.image;
-            img.alt = f.personne.nom;
-            img.onload = () => imageDiv.classList.add('loaded');
-            imageDiv.innerHTML = "";
-            imageDiv.appendChild(img);
-          } else {
-            imageDiv.innerHTML = "<span>?</span>";
-          }
-        } else {
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.placeholder = "Ajouter un nom";
-
-          const boutonRecruter = document.createElement('button');
-          boutonRecruter.textContent = "OK";
-          boutonRecruter.disabled = true;
-
-          boutonRecruter.onclick = async () => {
-            const nom = input.value.trim();
-            const wiki = await chercherWikipedia(nom);
-            f.personne = {
-              nom: nom,
-              image: wiki.image,
-              lien: wiki.url
-            };
-            afficherFonctions();
-          };
-
-          input.addEventListener('input', () => {
-            boutonRecruter.disabled = input.value.trim().length === 0;
-          });
-
-          infoDiv.appendChild(input);
-          infoDiv.appendChild(boutonRecruter);
-          imageDiv.innerHTML = "<span>?</span>";
-        }
-
-        div.appendChild(infoDiv);
-        div.appendChild(imageDiv);
-
-        if (index < 2) {
-          containerTop.appendChild(div);
-        } else {
-          containerBottom.appendChild(div);
-        }
-      });
-    }
-
-    async function chercherWikipedia(nom) {
-      const url = `https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|info&inprop=url&piprop=original&titles=${encodeURIComponent(nom)}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const page = Object.values(data.query.pages)[0];
-        return {
-          url: page.fullurl || null,
-          image: page.original ? page.original.source : null
-        };
-      } catch (e) {
-        return { url: null, image: null };
+      if (f.personne.image) {
+        const img = document.createElement('img');
+        img.src = f.personne.image;
+        img.alt = f.personne.nom;
+        img.onload = () => imageDiv.classList.add('loaded');
+        imageDiv.innerHTML = "";
+        imageDiv.appendChild(img);
+      } else {
+        imageDiv.innerHTML = "<span>?</span>";
       }
-    }
+    } else {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = "Ajouter un nom";
+      input.autocomplete = "off";
 
-    function genererTableauStats() {
-      const statsDiv = document.getElementById('stats');
-      statsDiv.innerHTML = "";
+      const bouton = document.createElement('button');
+      bouton.textContent = "OK";
+      bouton.disabled = true;
 
-      const map = new Map();
-
-      fonctions.forEach(f => {
-        if (f.personne) {
-          const nom = f.personne.nom;
-          if (!map.has(nom)) {
-            map.set(nom, { count: 1, postes: [f.nom] });
-          } else {
-            const val = map.get(nom);
-            val.count++;
-            val.postes.push(f.nom);
-          }
-        }
+      input.addEventListener('input', async () => {
+        bouton.disabled = input.value.trim().length < 2;
       });
 
-      const doublons = [...map.entries()].filter(([_, val]) => val.count > 1);
-      if (doublons.length === 0) return;
+      bouton.onclick = async () => {
+        const nom = input.value.trim();
+        const wiki = await chercherWikipedia(nom);
+        f.personne = {
+          nom: nom,
+          image: wiki.image
+        };
+        afficherFonctions();
+      };
 
-      const table = document.createElement("table");
-      table.id = "tableau-stats";
-
-      const header = table.insertRow();
-      header.innerHTML = "<th>Nom</th><th>Nombre de postes</th><th>Postes occupés</th>";
-
-      doublons.forEach(([nom, val]) => {
-        const row = table.insertRow();
-        row.innerHTML = `<td>${nom}</td><td>${val.count}</td><td>${val.postes.join(", ")}</td>`;
-      });
-
-      statsDiv.appendChild(table);
+      infoDiv.appendChild(input);
+      infoDiv.appendChild(bouton);
+      imageDiv.innerHTML = "<span>?</span>";
     }
 
-    afficherFonctions();
+    div.appendChild(infoDiv);
+    div.appendChild(imageDiv);
+
+    if (index < 2) {
+      containerTop.appendChild(div);
+    } else {
+      containerBottom.appendChild(div);
+    }
+  });
+
+  afficherBoutonValidation();
+}
+
+async function chercherWikipedia(nom) {
+  const pageName = encodeURIComponent(nom);
+  const url = `https://fr.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=200&titles=${pageName}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const pages = data.query.pages;
+  const page = Object.values(pages)[0];
+  const image = page?.thumbnail?.source || "";
+  return { image };
+}
+
+function afficherBoutonValidation() {
+  let boutonValider = document.getElementById("valider-gouvernement");
+  if (!boutonValider) {
+    boutonValider = document.createElement("button");
+    boutonValider.id = "valider-gouvernement";
+    boutonValider.textContent = "Valider le gouvernement";
+    boutonValider.style.display = "block";
+    boutonValider.style.margin = "40px auto";
+    boutonValider.style.padding = "10px 20px";
+    boutonValider.style.fontSize = "1em";
+    document.querySelector(".container").appendChild(boutonValider);
+    boutonValider.onclick = afficherStats;
+  }
+}
+
+function afficherStats() {
+  const map = new Map();
+
+  fonctions.forEach(f => {
+    if (f.personne) {
+      const nom = f.personne.nom;
+      if (!map.has(nom)) {
+        map.set(nom, []);
+      }
+      map.get(nom).push(f.nom);
+    }
+  });
+
+  const doublons = Array.from(map.entries()).filter(([_, postes]) => postes.length > 1);
+
+  let tableau = document.getElementById("stats-gouvernement");
+  if (tableau) tableau.remove();
+
+  if (doublons.length > 0) {
+    tableau = document.createElement("table");
+    tableau.id = "stats-gouvernement";
+    tableau.style.margin = "40px auto";
+    tableau.style.borderCollapse = "collapse";
+    tableau.style.width = "80%";
+
+    const thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Nom</th><th>Nombre de postes</th><th>Postes</th></tr>";
+    tableau.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    doublons.forEach(([nom, postes]) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${nom}</td><td>${postes.length}</td><td>${postes.join(", ")}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    tableau.appendChild(tbody);
+    document.querySelector(".container").appendChild(tableau);
+  } else {
+    alert("Aucune personne sélectionnée plusieurs fois.");
+  }
+}
+
+afficherFonctions();
+</script>
+
   </script>
 </body>
 </html>
