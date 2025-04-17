@@ -201,6 +201,7 @@
   </div>
 
   <script>
+  
   const fonctions = [
     { nom: "Président de la République", personne: null },
     { nom: "Premier Ministre", personne: null },
@@ -443,8 +444,14 @@
     });
 
     container.appendChild(table);
- 
+  }
 
+  document.getElementById('valider-btn').addEventListener('click', () => {
+    genererTableauStats();
+  });
+
+  afficherFonctions();
+</script>
 
   </script>
 </body>
