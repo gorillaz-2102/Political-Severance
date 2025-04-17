@@ -2,51 +2,55 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Drapeau Français en fond</title>
-  <style>
-    /* FOND DRAPEAU FRANÇAIS */
-    .fond-drapeau {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(to right, blue 33.33%, white 33.33% 66.66%, red 66.66%);
-      opacity: 0.05;
-      z-index: -1;
-      animation: flotter 3s ease-in-out infinite;
-    }
+  <title>Attribution de Fonctions</title>
+  <style
+    
+  h1 {
+    text-align: center;
+    color: #004080;
+  }
 
-    @keyframes flotter {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(5px); }
-      100% { transform: translateY(0px); }
-    }
+  .fonction {
+    background-color: #ffffff;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #d0d7de;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    width: 320px;
+  }
 
-    /* CONTENU DE LA PAGE */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
+  select,
+  input[type="text"] {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
 
-    h1 {
-      text-align: center;
-      color: #333;
-    }
+button {
+  padding: 8px 16px;
+  background-color: #cc0000; /* rouge de base */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: background-color 0.3s;
+}
 
-    p {
-      text-align: center;
-      color: #555;
-    }
-  </style>
+button:hover {
+  background-color: #990000; /* rouge foncé au survol */
+}
+  }
+  </style
+    
+}>
 </head>
 <body>
-
-  <div class="fond-drapeau"></div> <!-- Le fond de drapeau -->
-
-  <h1>Bienvenue sur mon site</h1>
-  <p>Voici un fond discret avec le drapeau français</p>
   <h1>Liste des fonctions</h1>
   <div id="fonctions"></div>
 
@@ -132,6 +136,6 @@
 
     afficherFonctions();
   </script>
-
 </body>
 </html>
+
