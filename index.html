@@ -186,6 +186,14 @@
     }
   </style>
 </head>
+  <div class="container" style="text-align: center; margin-top: 40px;">
+  <button id="valider-btn" style="padding: 10px 20px; font-size: 16px; background-color: #45a049; color: white; border: none; border-radius: 6px; cursor: pointer;">
+    Valider mon gouvernement
+  </button>
+</div>
+
+<div id="stats-container" class="container" style="margin-top: 40px;"></div>
+
 <body>
   <div class="container">
     <header>
@@ -401,6 +409,70 @@
     }
 
     afficherFonctions();
+    document.getElementById('valider-btn').addEventListener('click', () => {
+  genererTableauStats();
+});
+  const stats = {};
+
+  fonctions.forEach(f => {
+    if (f.personne) {
+      const nom = f.personne.nom;
+      if (!stats[nom]) {
+        stats[nom] = {
+          count: 0,
+          postes: []
+        };
+      }
+      stats[nom].count += 1;
+      stats[nom].postes.push(f.nom);
+    }
+  });
+
+  const filteredStats = Object.entries(stats).filter(([_, data]) => data.count >= 2);
+  if (filteredStats.length === 0) return;
+
+  const container = document.getElementById('stats-container');
+  container.innerHTML = ""; // On vide avant de reconstruire
+
+  const title = document.createElement('h2');
+  title.textContent = "Statistiques des personnes sélectionnées plusieurs fois";
+  container.appendChild(title);
+
+  const table = document.createElement('table');
+  table.style.borderCollapse = 'collapse';
+  table.style.width = '100%';
+  table.style.marginTop = '10px';
+
+  const headerRow = table.insertRow();
+  ['Nom', 'Nombre de sélections', 'Postes'].forEach(text => {
+    const th = document.createElement('th');
+    th.textContent = text;
+    th.style.border = '1px solid #ccc';
+    th.style.padding = '8px';
+    th.style.backgroundColor = '#f0f0f0';
+    headerRow.appendChild(th);
+  });
+
+  filteredStats.forEach(([nom, data]) => {
+    const row = table.insertRow();
+    const cellNom = row.insertCell();
+    cellNom.textContent = nom;
+
+    const cellCount = row.insertCell();
+    cellCount.textContent = data.count;
+
+    const cellPostes = row.insertCell();
+    cellPostes.textContent = data.postes.join(", ");
+
+    [cellNom, cellCount, cellPostes].forEach(cell => {
+      cell.style.border = '1px solid #ccc';
+      cell.style.padding = '8px';
+    });
+  });
+
+  container.appendChild(table);
+}
+
   </script>
 </body>
 </html>
