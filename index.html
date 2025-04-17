@@ -3,78 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Attribution de Fonctions</title>
-  <style
-    .fond-drapeau {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, blue 33.33%, white 33.33% 66.66%, red 66.66%);
-  opacity: 0.08; /* transparence légère */
-  z-index: -1; /* derrière tout le reste */
-  animation: flotter 3s ease-in-out infinite;
-}
-
-/* Effet flottant léger */
-@keyframes flotter {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-  100% { transform: translateY(0); }
-}>
-  body {
-    <div class="drapeau-france"></div>
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f0f4f8;
-    color: #333;
-    padding: 20px;
-    
-  }
-
-  h1 {
-    text-align: center;
-    color: #004080;
-  }
-
-  .fonction {
-    background-color: #ffffff;
-    margin: 20px auto;
-    padding: 15px;
-    border: 1px solid #d0d7de;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    width: 320px;
-  }
-
-  select,
-  input[type="text"] {
-    width: calc(100% - 12px);
-    padding: 8px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-button {
-  padding: 8px 16px;
-  background-color: #cc0000; /* rouge de base */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 5px;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #990000; /* rouge foncé au survol */
-}
-  }
-  </style
-    
-}>
+  <style>
+    body { font-family: sans-serif; }
+    .fonction { margin-bottom: 20px; padding: 10px; border: 1px solid #45a049; border-radius: 8px; width: 300px; }
+    input[type="text"] { margin-right: 5px; }
+  </style>
 </head>
 <body>
   <h1>Liste des fonctions</h1>
@@ -100,8 +33,8 @@ button:hover {
         const div = document.createElement('div');
         div.className = 'fonction';
 
-        const info = f.personne ? ${f.nom} : ${f.personne} : ${f.nom} : (libre);
-        div.innerHTML = <strong>${info}</strong><br><br>;
+        const info = f.personne ? `${f.nom} : ${f.personne}` : `${f.nom} : (libre)`;
+        div.innerHTML = `<strong>${info}</strong><br><br>`;
 
         if (!f.personne) {
           // Menu de sélection
