@@ -3,7 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Attribution de Fonctions</title>
-  <style>
+  <style
+    .fond-drapeau {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, blue 33.33%, white 33.33% 66.66%, red 66.66%);
+  opacity: 0.08; /* transparence légère */
+  z-index: -1; /* derrière tout le reste */
+  animation: flotter 3s ease-in-out infinite;
+}
+
+/* Effet flottant léger */
+@keyframes flotter {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+  100% { transform: translateY(0); }
+}>
   body {
     <div class="drapeau-france"></div>
     font-family: 'Segoe UI', sans-serif;
@@ -55,23 +73,7 @@ button:hover {
 }
   }
   </style
-    .fond-drapeau {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, blue 33.33%, white 33.33% 66.66%, red 66.66%);
-  opacity: 0.08; /* transparence légère */
-  z-index: -1; /* derrière tout le reste */
-  animation: flotter 3s ease-in-out infinite;
-}
-
-/* Effet flottant léger */
-@keyframes flotter {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-  100% { transform: translateY(0); }
+    
 }>
 </head>
 <body>
