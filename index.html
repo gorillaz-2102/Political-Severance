@@ -68,7 +68,8 @@
       text-transform: uppercase;
     }
 
-    #fonctions {
+    #fonctions,
+    #fonctions-ministeres {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -77,7 +78,7 @@
 
     .fonction {
       display: flex;
-      height: 120px;
+      height: 140px;
       border: 1px solid #45a049;
       border-radius: 8px;
       overflow: hidden;
@@ -89,7 +90,7 @@
     }
 
     .fonction.small {
-      width: 240px;
+      width: 310px;
     }
 
     .info {
@@ -132,11 +133,13 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      transform: translateX(15px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .image-zone.loaded img {
       opacity: 1;
+      transform: translateX(0);
     }
 
     .image-zone span {
@@ -204,7 +207,7 @@
       { nom: "Intérieur", personne: null },
       { nom: "Transition écologique et solidaire", personne: null },
       { nom: "Justice", personne: null },
-      { nom: "Europe et des aff. étrangères", personne: null },
+      { nom: "Europe et aff. étrangères", personne: null },
       { nom: "Armées", personne: null },
       { nom: "Cohésion des territoires", personne: null },
       { nom: "Solidarités & Santé", personne: null },
