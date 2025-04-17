@@ -22,10 +22,6 @@
     header {
       text-align: center;
       margin-bottom: 40px;
-      height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     header h1 {
@@ -142,58 +138,44 @@
       transform: translateX(0);
     }
 
-    .image-zone span {
-      font-size: 24px;
-      color: #666;
-      transition: opacity 0.3s ease;
+    .valider-container {
+      text-align: center;
+      margin: 40px 0;
     }
 
-    input[type="text"] {
-      margin-bottom: 6px;
-    }
-
-    button {
-      margin-top: 4px;
-    }
-
-    #suggestions {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      z-index: 1000;
-    }
-
-    #suggestions li:hover {
-      background-color: #f0f0f0;
-    }
-
-    #suggestions li {
-      display: flex;
-      align-items: center;
-      padding: 5px;
+    .valider-container button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      background-color: #45a049;
+      color: white;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    #suggestions li img {
-      width: 30px;
-      height: 30px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-right: 10px;
+    .valider-container button:hover {
+      background-color: #388e3c;
     }
+
+    #tableau-stats {
+      margin-top: 30px;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #tableau-stats th,
+    #tableau-stats td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    #tableau-stats th {
+      background-color: #f2f2f2;
+    }
+
   </style>
 </head>
-  <div class="container" style="text-align: center; margin-top: 40px;">
-  <button id="valider-btn" style="padding: 10px 20px; font-size: 16px; background-color: #45a049; color: white; border: none; border-radius: 6px; cursor: pointer;">
-    Valider mon gouvernement
-  </button>
-</div>
-
-<div id="stats-container" class="container" style="margin-top: 40px;"></div>
-
 <body>
   <div class="container">
     <header>
@@ -201,11 +183,15 @@
       <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
     </header>
 
-    <ul id="suggestions"></ul>
     <div id="fonctions"></div>
-
     <div class="separateur"><span>Ministères</span></div>
     <div id="fonctions-ministeres"></div>
+
+    <div class="valider-container">
+      <button onclick="genererTableauStats()">Valider mon gouvernement</button>
+    </div>
+
+    <div id="stats"></div>
   </div>
 
   <script>
@@ -254,14 +240,10 @@
         imageDiv.className = 'image-zone';
 
         if (f.personne) {
-         const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
-         const nomLink = document.createElement('a');
-         nomLink.className = 'nom-personne';
-         nomLink.href = wikiUrl;
-         nomLink.target = "_blank"; // ouvre dans un nouvel onglet
-         nomLink.textContent = f.personne.nom;
-         infoDiv.appendChild(nomLink);
-
+          const nomLink = document.createElement('span');
+          nomLink.className = 'nom-personne';
+          nomLink.textContent = f.personne.nom;
+          infoDiv.appendChild(nomLink);
 
           const boutonChanger = document.createElement('button');
           boutonChanger.textContent = "Changer";
@@ -285,111 +267,16 @@
           const input = document.createElement('input');
           input.type = 'text';
           input.placeholder = "Ajouter un nom";
-          input.autocomplete = "off";
 
           const boutonRecruter = document.createElement('button');
-          boutonRecruter.textContent = "Changer";
-          boutonRecruter.disabled = true;
+          boutonRecruter.textContent = "OK";
+          boutonRecruter.onclick = () => {
+            f.personne = { nom: input.value.trim(), image: null };
+            afficherFonctions();
+          };
 
-          const suggestions = document.getElementById('suggestions');
-
-
-
-
-
-          
-
-            input.addEventListener("input", async () => {
-              const query = input.value.trim();
-              suggestions.innerHTML = "";
-              boutonRecruter.disabled = true;
-              if (query.length < 2) return;
-            
-              // Fonction pour chercher sur une langue
-              async function rechercherWiki(lang, query) {
-                const res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
-                const data = await res.json();
-                return data.query ? Object.values(data.query.pages) : [];
-              }
-            
-              // Fallback Wikidata
-              async function chercherImageWikidata(qid) {
-                const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
-                const data = await res.json();
-                const claims = data.entities[qid].claims;
-                const imageClaim = claims && claims.P18 ? claims.P18[0].mainsnak.datavalue.value : null;
-            
-                if (imageClaim) {
-                  const filename = imageClaim.replace(/ /g, '_');
-                  const md5 = await crypto.subtle.digest('MD5', new TextEncoder().encode(filename));
-                  const hashArray = Array.from(new Uint8Array(md5)).map(b => b.toString(16).padStart(2, '0'));
-                  const hash = hashArray.join('');
-                  return `https://upload.wikimedia.org/wikipedia/commons/${hash[0]}/${hash.slice(0,2)}/${filename}`;
-                }
-            
-                return null;
-              }
-            
-              const allPages = await rechercherWiki("fr", query);
-              const pages = allPages.length > 0 ? allPages : await rechercherWiki("en", query);
-            
-              for (const page of pages) {
-                const li = document.createElement("li");
-                const span = document.createElement("span");
-                span.textContent = page.title;
-            
-                let imgSrc = page.thumbnail ? page.thumbnail.source : "";
-            
-                if (!imgSrc || imgSrc.includes("No_image") || imgSrc.includes("Image_not_available")) {
-                  // Récupérer image via Wikidata
-                  const qid = page.pageprops ? page.pageprops.wikibase_item : null;
-                  if (qid) {
-                    imgSrc = await chercherImageWikidata(qid) || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
-                  }
-                }
-            
-                const img = document.createElement("img");
-                img.src = imgSrc;
-                img.alt = "";
-                img.style.width = "30px";
-                img.style.height = "30px";
-                img.style.objectFit = "cover";
-                img.style.borderRadius = "50%";
-                img.style.marginRight = "10px";
-            
-                li.appendChild(img);
-                li.appendChild(span);
-            
-                li.onclick = () => {
-                  f.personne = {
-                    nom: page.title,
-                    image: img.src
-                  };
-                  suggestions.innerHTML = "";
-                  afficherFonctions();
-                };
-            
-                suggestions.appendChild(li);
-              }
-            
-              const rect = input.getBoundingClientRect();
-              suggestions.style.left = rect.left + "px";
-              suggestions.style.top = (window.scrollY + rect.bottom) + "px";
-              suggestions.style.width = rect.width + "px";
-            });
-
-
-
-
-
-
-
-          
-
-          document.addEventListener("click", (e) => {
-            if (!suggestions.contains(e.target) && e.target !== input) {
-              suggestions.innerHTML = "";
-            }
+          input.addEventListener('input', () => {
+            boutonRecruter.disabled = input.value.trim().length === 0;
           });
 
           infoDiv.appendChild(input);
@@ -408,71 +295,44 @@
       });
     }
 
-    afficherFonctions();
-    document.getElementById('valider-btn').addEventListener('click', () => {
-  genererTableauStats();
-});
-  const stats = {};
+    function genererTableauStats() {
+      const statsDiv = document.getElementById('stats');
+      statsDiv.innerHTML = "";
 
-  fonctions.forEach(f => {
-    if (f.personne) {
-      const nom = f.personne.nom;
-      if (!stats[nom]) {
-        stats[nom] = {
-          count: 0,
-          postes: []
-        };
-      }
-      stats[nom].count += 1;
-      stats[nom].postes.push(f.nom);
+      const map = new Map();
+
+      fonctions.forEach(f => {
+        if (f.personne) {
+          const nom = f.personne.nom;
+          if (!map.has(nom)) {
+            map.set(nom, { count: 1, postes: [f.nom] });
+          } else {
+            const val = map.get(nom);
+            val.count++;
+            val.postes.push(f.nom);
+          }
+        }
+      });
+
+      const doublons = [...map.entries()].filter(([_, val]) => val.count > 1);
+      if (doublons.length === 0) return;
+
+      const table = document.createElement("table");
+      table.id = "tableau-stats";
+
+      const header = table.insertRow();
+      header.innerHTML = "<th>Nom</th><th>Nombre de postes</th><th>Postes occupés</th>";
+
+      doublons.forEach(([nom, val]) => {
+        const row = table.insertRow();
+        row.innerHTML = `<td>${nom}</td><td>${val.count}</td><td>${val.postes.join(", ")}</td>`;
+      });
+
+      statsDiv.appendChild(table);
     }
-  });
 
-  const filteredStats = Object.entries(stats).filter(([_, data]) => data.count >= 2);
-  if (filteredStats.length === 0) return;
-
-  const container = document.getElementById('stats-container');
-  container.innerHTML = ""; // On vide avant de reconstruire
-
-  const title = document.createElement('h2');
-  title.textContent = "Statistiques des personnes sélectionnées plusieurs fois";
-  container.appendChild(title);
-
-  const table = document.createElement('table');
-  table.style.borderCollapse = 'collapse';
-  table.style.width = '100%';
-  table.style.marginTop = '10px';
-
-  const headerRow = table.insertRow();
-  ['Nom', 'Nombre de sélections', 'Postes'].forEach(text => {
-    const th = document.createElement('th');
-    th.textContent = text;
-    th.style.border = '1px solid #ccc';
-    th.style.padding = '8px';
-    th.style.backgroundColor = '#f0f0f0';
-    headerRow.appendChild(th);
-  });
-
-  filteredStats.forEach(([nom, data]) => {
-    const row = table.insertRow();
-    const cellNom = row.insertCell();
-    cellNom.textContent = nom;
-
-    const cellCount = row.insertCell();
-    cellCount.textContent = data.count;
-
-    const cellPostes = row.insertCell();
-    cellPostes.textContent = data.postes.join(", ");
-
-    [cellNom, cellCount, cellPostes].forEach(cell => {
-      cell.style.border = '1px solid #ccc';
-      cell.style.padding = '8px';
-    });
-  });
-
-  container.appendChild(table);
-}
-
+    afficherFonctions();
   </script>
 </body>
 </html>
+
