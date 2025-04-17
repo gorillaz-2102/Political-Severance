@@ -4,30 +4,36 @@
   <meta charset="UTF-8">
   <title>Attribution de Fonctions</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
+
     body {
       font-family: sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      justify-content: center;
       background-color: #f9f9f9;
     }
 
-    h1 {
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
       text-align: center;
-      width: 100%;
+      margin-bottom: 30px;
     }
 
     #fonctions {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      max-width: 900px;
       gap: 20px;
     }
 
     .fonction {
-      width: 400px;
+      width: 360px;
+      height: 120px;
       display: flex;
       border: 1px solid #45a049;
       border-radius: 8px;
@@ -51,13 +57,16 @@
     .nom-personne {
       color: #002366; /* Bleu roi */
       font-size: 1.6em;
+      font-weight: bold;
+      font-family: 'Roboto Condensed', sans-serif;
       line-height: 1em;
       margin-top: 6px;
       margin-bottom: 6px;
     }
 
     .image-zone {
-      width: 80px;
+      width: 120px;
+      height: 100%;
       background-color: #eee;
       display: flex;
       align-items: center;
@@ -89,8 +98,11 @@
   </style>
 </head>
 <body>
-  <div style="width: 100%;">
-    <h1>Liste des fonctions</h1>
+  <div class="container">
+    <header>
+      <h1>Liste des fonctions</h1>
+    </header>
+
     <ul id="suggestions" style="position:absolute; background:white; border:1px solid #ccc; list-style:none; padding:0; margin:0; z-index:1000;"></ul>
     <div id="fonctions"></div>
   </div>
@@ -131,7 +143,7 @@
           infoDiv.appendChild(nomDiv);
 
           const boutonLiberer = document.createElement('button');
-          boutonLiberer.textContent = "Libérer";
+          boutonLiberer.textContent = "Changer";
           boutonLiberer.onclick = () => {
             f.personne = null;
             afficherFonctions();
