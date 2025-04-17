@@ -34,6 +34,7 @@
     }
     .info {
       flex: 1;
+      position: relative;
     }
     .image-zone {
       width: 60px;
@@ -50,7 +51,7 @@
       height: 100%;
       object-fit: cover;
     }
-    #suggestions {
+    .suggestions {
       position: absolute;
       background-color: white;
       border: 1px solid #ccc;
@@ -59,14 +60,17 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      max-height: 150px;
+      overflow-y: auto;
+      width: 100%;
     }
-    #suggestions li {
+    .suggestions li {
       display: flex;
       align-items: center;
       padding: 5px;
       cursor: pointer;
     }
-    #suggestions li:hover {
+    .suggestions li:hover {
       background-color: #f0f0f0;
     }
     .nom-personne {
@@ -91,7 +95,6 @@
     <h1>Créer votre Gouvernement</h1>
     <div id="fonctions"></div>
     <div id="fonctions-ministeres"></div>
-    <ul id="suggestions"></ul>
     <button onclick="validerGouvernement()">Valider le Gouvernement</button>
     <div id="stats"></div>
   </div>
@@ -161,11 +164,15 @@
           input.type = 'text';
           input.placeholder = 'Nom...';
 
+          const suggestionList = document.createElement('ul');
+          suggestionList.className = 'suggestions';
+          info.appendChild(suggestionList);
+
           input.addEventListener('input', async () => {
             const val = input.value.trim();
-            const list = document.getElementById('suggestions');
-            list.innerHTML = '';
+            suggestionList.innerHTML = '';
             if (val.length < 2) return;
+
             const res = await fetch(`https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(val)}&gpslimit=5`);
             const data = await res.json();
             const pages = data.query ? Object.values(data.query.pages) : [];
@@ -185,15 +192,9 @@
               li.onclick = () => {
                 f.personne = { nom: page.title, image: img.src };
                 afficherFonctions();
-                list.innerHTML = '';
               };
-              list.appendChild(li);
+              suggestionList.appendChild(li);
             });
-
-            const rect = input.getBoundingClientRect();
-            list.style.left = rect.left + 'px';
-            list.style.top = rect.bottom + window.scrollY + 'px';
-            list.style.width = rect.width + 'px';
           });
 
           info.appendChild(input);
@@ -223,16 +224,21 @@
 
       const personnesRedondantes = Object.values(comptage).filter(p => p.fonctions.length > 1);
 
-      if (personnesRedondantes.length === 0) {
-        statsDiv.innerHTML = '<p>Aucune personne n\'a été sélectionnée plusieurs fois.</p>';
-        return;
+      let html = '';
+      if (personnesRedondantes.length > 0) {
+        html += '<h2>Personnes sélectionnées plusieurs fois</h2><table><thead><tr><th>Nom</th><th>Fonctions</th></tr></thead><tbody>';
+        personnesRedondantes.forEach(p => {
+          html += `<tr><td>${p.nom}</td><td>${p.fonctions.join(', ')}</td></tr>`;
+        });
+        html += '</tbody></table>';
       }
 
-      let html = '<h2>Personnes sélectionnées plusieurs fois</h2><table><thead><tr><th>Nom</th><th>Fonctions</th></tr></thead><tbody>';
-      personnesRedondantes.forEach(p => {
-        html += `<tr><td>${p.nom}</td><td>${p.fonctions.join(', ')}</td></tr>`;
+      html += '<h2>Composition du Gouvernement</h2><table><thead><tr><th>Fonction</th><th>Nom</th></tr></thead><tbody>';
+      fonctions.forEach(f => {
+        html += `<tr><td>${f.nom}</td><td>${f.personne ? f.personne.nom : ''}</td></tr>`;
       });
       html += '</tbody></table>';
+
       statsDiv.innerHTML = html;
     }
 
