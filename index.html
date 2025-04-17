@@ -2,139 +2,51 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Attribution de Fonctions</title>
-  <style
-    
-  h1 {
-    text-align: center;
-    color: #004080;
-  }
-
-  .fonction {
-    background-color: #ffffff;
-    margin: 20px auto;
-    padding: 15px;
-    border: 1px solid #d0d7de;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    width: 320px;
-  }
-
-  select,
-  input[type="text"] {
-    width: calc(100% - 12px);
-    padding: 8px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-button {
-  padding: 8px 16px;
-  background-color: #cc0000; /* rouge de base */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 5px;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #990000; /* rouge foncé au survol */
-}
-  }
-  </style
-    
-}>
-</head>
-<body>
-  <h1>Liste des fonctions</h1>
-  <div id="fonctions"></div>
-
-  <script>
-    const fonctions = [
-      { nom: "Président", personne: null, propositions: ["Juan Branco", "Dominique de Villepin", "Jean-Luc Mélenchon"] },
-      { nom: "1er Ministre", personne: null, propositions: ["David Guiraud", "Henri d'Anselme", "Dominique de Villepin"] },
-      { nom: "Garde des sceaux", personne: null, propositions: ["Alexis Corbiére", "Hugo", "Isabelle"] },
-      { nom: "Ministre de la Culture", personne: null, propositions: ["Xavier Mathieu", "Edgar Morin", "Chloé"] },
-       { nom: "Ministre de l'Écologie", personne: null, propositions: ["Hugo Clément", "Lamya Essemlali", "Delphine Batho"] },
-       { nom: "Ministre de l'Industrie", personne: null, propositions: ["Jean Marc Jancovici", "Arnaud Montebourg", "Philippe Poutou"] },
-       { nom: "Ministre des Armées", personne: null, propositions: ["Général de Villiers", "Antoine Léaument", "Chloé"] },
-       { nom: "Ministre de l'Education Nationale", personne: null, propositions: ["Sandrine Rousseau", "Céline Alvarez", "Louis Boyard"] },
-    ];
-
-    function afficherFonctions() {
-      const container = document.getElementById('fonctions');
-      container.innerHTML = '';
-
-      fonctions.forEach((f, index) => {
-        const div = document.createElement('div');
-        div.className = 'fonction';
-
-        const info = f.personne ? `${f.nom} : ${f.personne}` : `${f.nom} : (libre)`;
-        div.innerHTML = `<strong>${info}</strong><br><br>`;
-
-        if (!f.personne) {
-          // Menu de sélection
-          const select = document.createElement('select');
-          const optionVide = document.createElement('option');
-          optionVide.textContent = "-- Choisir une personne --";
-          optionVide.value = "";
-          select.appendChild(optionVide);
-
-          f.propositions.forEach(p => {
-            const option = document.createElement('option');
-            option.value = p;
-            option.textContent = p;
-            select.appendChild(option);
-          });
-
-          select.onchange = () => {
-            if (select.value) {
-              f.personne = select.value;
-              afficherFonctions();
-            }
-          };
-
-          // Champ pour ajouter un nouveau nom
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.placeholder = "Ajouter un nom";
-
-          const boutonAjouter = document.createElement('button');
-          boutonAjouter.textContent = "Ajouter";
-          boutonAjouter.onclick = () => {
-            const nouveauNom = input.value.trim();
-            if (nouveauNom && !f.propositions.includes(nouveauNom)) {
-              f.propositions.push(nouveauNom);
-              input.value = "";
-              afficherFonctions();
-            }
-          };
-
-          div.appendChild(select);
-          div.appendChild(document.createElement('br'));
-          div.appendChild(document.createElement('br'));
-          div.appendChild(input);
-          div.appendChild(boutonAjouter);
-        } else {
-          const boutonLiberer = document.createElement('button');
-          boutonLiberer.textContent = "Libérer";
-          boutonLiberer.onclick = () => {
-            f.personne = null;
-            afficherFonctions();
-          };
-          div.appendChild(boutonLiberer);
-        }
-
-        container.appendChild(div);
-      });
+  <title>Drapeau Français en fond</title>
+  <style>
+    /* FOND DRAPEAU FRANÇAIS */
+    .fond-drapeau {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to right, blue 33.33%, white 33.33% 66.66%, red 66.66%);
+      opacity: 0.05;
+      z-index: -1;
+      animation: flotter 3s ease-in-out infinite;
     }
 
-    afficherFonctions();
-  </script>
+    @keyframes flotter {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(5px); }
+      100% { transform: translateY(0px); }
+    }
+
+    /* CONTENU DE LA PAGE */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    p {
+      text-align: center;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="fond-drapeau"></div> <!-- Le fond de drapeau -->
+
+  <h1>Bienvenue sur mon site</h1>
+  <p>Voici un fond discret avec le drapeau français</p>
+
 </body>
 </html>
