@@ -14,14 +14,29 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 20px;
     }
 
     header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+
+    header p {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 10px;
     }
 
     #fonctions {
@@ -32,13 +47,20 @@
     }
 
     .fonction {
-      width: 360px;
-      height: 120px;
       display: flex;
+      height: 120px;
       border: 1px solid #45a049;
       border-radius: 8px;
       overflow: hidden;
       background: white;
+    }
+
+    .fonction.large {
+      width: 360px;
+    }
+
+    .fonction.small {
+      width: 240px;
     }
 
     .info {
@@ -52,10 +74,11 @@
 
     .titre {
       font-weight: bold;
+      font-size: 0.95em;
     }
 
     .nom-personne {
-      color: #002366; /* Bleu roi */
+      color: #002366;
       font-size: 1.6em;
       font-weight: bold;
       font-family: 'Roboto Condensed', sans-serif;
@@ -92,18 +115,44 @@
       margin-top: 4px;
     }
 
+    #suggestions {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      z-index: 1000;
+    }
+
     #suggestions li:hover {
       background-color: #f0f0f0;
+    }
+
+    #suggestions li {
+      display: flex;
+      align-items: center;
+      padding: 5px;
+      cursor: pointer;
+    }
+
+    #suggestions li img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Liste des fonctions</h1>
+      <h1>Mon Gouvernement Idéal</h1>
+      <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
     </header>
 
-    <ul id="suggestions" style="position:absolute; background:white; border:1px solid #ccc; list-style:none; padding:0; margin:0; z-index:1000;"></ul>
+    <ul id="suggestions"></ul>
     <div id="fonctions"></div>
   </div>
 
@@ -121,6 +170,8 @@
       { nom: "Ministre de l'économie et des finances", personne: null },
       { nom: "Ministre de la culture", personne: null },
       { nom: "Ministre du travail", personne: null },
+      { nom: "Ministère de l'éducation nationale", personne: null },
+      { nom: "Ministère agriculture et alimentation", personne: null },
       { nom: "Ministre action et comptes publics", personne: null },
       { nom: "Ministre enseignement sup., recherche et innov.", personne: null },
       { nom: "Ministre des outre-mer", personne: null },
@@ -135,6 +186,7 @@
       fonctions.forEach((f, index) => {
         const div = document.createElement('div');
         div.className = 'fonction';
+        div.classList.add(index < 2 ? 'large' : 'small');
 
         const infoDiv = document.createElement('div');
         infoDiv.className = 'info';
@@ -142,8 +194,10 @@
         const titre = document.createElement('div');
         titre.className = 'titre';
         titre.textContent = f.nom;
-
         infoDiv.appendChild(titre);
+
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
 
         if (f.personne) {
           const nomDiv = document.createElement('div');
@@ -151,24 +205,42 @@
           nomDiv.textContent = f.personne.nom;
           infoDiv.appendChild(nomDiv);
 
-          const boutonLiberer = document.createElement('button');
-          boutonLiberer.textContent = "Changer";
-          boutonLiberer.onclick = () => {
+          const boutonChanger = document.createElement('button');
+          boutonChanger.textContent = "Changer";
+          boutonChanger.onclick = () => {
             f.personne = null;
             afficherFonctions();
           };
-          infoDiv.appendChild(boutonLiberer);
+          infoDiv.appendChild(boutonChanger);
+
+          if (f.personne.image) {
+            const img = document.createElement('img');
+            img.src = f.personne.image;
+            img.alt = f.personne.nom;
+            imageDiv.innerHTML = "";
+            imageDiv.appendChild(img);
+          } else {
+            imageDiv.innerHTML = "<span>?</span>";
+          }
         } else {
           const input = document.createElement('input');
           input.type = 'text';
           input.placeholder = "Ajouter un nom";
           input.autocomplete = "off";
 
+          const boutonRecruter = document.createElement('button');
+          boutonRecruter.textContent = "Changer";
+          boutonRecruter.disabled = true;
+
           const suggestions = document.getElementById('suggestions');
+
+          let selectedPage = null;
 
           input.addEventListener("input", async () => {
             const query = input.value.trim();
             suggestions.innerHTML = "";
+            selectedPage = null;
+            boutonRecruter.disabled = true;
             if (query.length < 2) return;
 
             const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
@@ -179,20 +251,8 @@
 
             pages.forEach(page => {
               const li = document.createElement("li");
-              li.style.display = "flex";
-              li.style.alignItems = "center";
-              li.style.padding = "5px";
-              li.style.cursor = "pointer";
-
               const img = document.createElement("img");
               img.src = page.thumbnail ? page.thumbnail.source : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
-              img.alt = "";
-              img.style.marginRight = "10px";
-              img.style.width = "30px";
-              img.style.height = "30px";
-              img.style.objectFit = "cover";
-              img.style.borderRadius = "50%";
-
               const span = document.createElement("span");
               span.textContent = page.title;
 
@@ -200,9 +260,12 @@
               li.appendChild(span);
 
               li.onclick = () => {
-                input.value = page.title;
-                input.dataset.image = page.thumbnail ? page.thumbnail.source : "";
+                f.personne = {
+                  nom: page.title,
+                  image: page.thumbnail ? page.thumbnail.source : null
+                };
                 suggestions.innerHTML = "";
+                afficherFonctions();
               };
 
               suggestions.appendChild(li);
@@ -220,37 +283,9 @@
             }
           });
 
-          const boutonAjouter = document.createElement('button');
-          boutonAjouter.textContent = "Recruter";
-          boutonAjouter.onclick = () => {
-            const nom = input.value.trim();
-            if (!nom) return;
-
-            f.personne = {
-              nom: nom,
-              image: input.dataset.image || null
-            };
-            afficherFonctions();
-          };
-
           infoDiv.appendChild(input);
-          infoDiv.appendChild(boutonAjouter);
-        }
-
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-zone';
-
-        if (f.personne && f.personne.image) {
-          const img = document.createElement('img');
-          img.src = f.personne.image;
-          img.alt = f.personne.nom;
-          imageDiv.innerHTML = "";
-          imageDiv.appendChild(img);
-        } else {
-          const span = document.createElement('span');
-          span.textContent = "?";
-          imageDiv.innerHTML = "";
-          imageDiv.appendChild(span);
+          infoDiv.appendChild(boutonRecruter);
+          imageDiv.innerHTML = "<span>?</span>";
         }
 
         div.appendChild(infoDiv);
