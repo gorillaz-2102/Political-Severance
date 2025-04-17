@@ -120,8 +120,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s ease;
       position: relative;
+      overflow: hidden;
     }
 
     .image-zone img {
@@ -173,7 +173,6 @@
     #tableau-stats th {
       background-color: #f2f2f2;
     }
-
   </style>
 </head>
 <body>
@@ -242,7 +241,7 @@
         if (f.personne) {
           const nomLink = document.createElement('span');
           nomLink.className = 'nom-personne';
-          nomLink.textContent = f.personne.nom;
+          nomLink.innerHTML = f.personne.lien ? `<a href="${f.personne.lien}" target="_blank">${f.personne.nom}</a>` : f.personne.nom;
           infoDiv.appendChild(nomLink);
 
           const boutonChanger = document.createElement('button');
@@ -270,8 +269,16 @@
 
           const boutonRecruter = document.createElement('button');
           boutonRecruter.textContent = "OK";
-          boutonRecruter.onclick = () => {
-            f.personne = { nom: input.value.trim(), image: null };
+          boutonRecruter.disabled = true;
+
+          boutonRecruter.onclick = async () => {
+            const nom = input.value.trim();
+            const wiki = await chercherWikipedia(nom);
+            f.personne = {
+              nom: nom,
+              image: wiki.image,
+              lien: wiki.url
+            };
             afficherFonctions();
           };
 
@@ -293,6 +300,21 @@
           containerBottom.appendChild(div);
         }
       });
+    }
+
+    async function chercherWikipedia(nom) {
+      const url = `https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|info&inprop=url&piprop=original&titles=${encodeURIComponent(nom)}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const page = Object.values(data.query.pages)[0];
+        return {
+          url: page.fullurl || null,
+          image: page.original ? page.original.source : null
+        };
+      } catch (e) {
+        return { url: null, image: null };
+      }
     }
 
     function genererTableauStats() {
@@ -335,4 +357,3 @@
   </script>
 </body>
 </html>
-
