@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Mon Gouvernement Idéal</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
@@ -22,10 +22,6 @@
     header {
       text-align: center;
       margin-bottom: 40px;
-      height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     header h1 {
@@ -96,7 +92,6 @@
     .info {
       flex: 1;
       padding: 10px;
-      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -124,7 +119,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
     }
 
     .image-zone img {
@@ -143,15 +137,15 @@
       z-index: 1000;
     }
 
-    #suggestions li:hover {
-      background-color: #f0f0f0;
-    }
-
     #suggestions li {
       display: flex;
       align-items: center;
       padding: 5px;
       cursor: pointer;
+    }
+
+    #suggestions li:hover {
+      background-color: #f0f0f0;
     }
 
     #suggestions li img {
@@ -164,34 +158,31 @@
 
     #valider {
       display: block;
-      margin: 30px auto;
+      margin: 40px auto;
       padding: 10px 20px;
-      font-size: 16px;
-      background-color: #45a049;
+      font-size: 1em;
+      background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    #tableau-resultat {
+    table {
       margin-top: 40px;
       width: 100%;
       border-collapse: collapse;
+      background: white;
     }
 
-    #tableau-resultat th,
-    #tableau-resultat td {
+    th, td {
       border: 1px solid #ccc;
       padding: 8px;
-      text-align: center;
+      text-align: left;
     }
 
-    #tableau-resultat img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
+    th {
+      background: #f0f0f0;
     }
   </style>
 </head>
@@ -210,18 +201,154 @@
 
     <button id="valider">Valider mon gouvernement</button>
 
-    <table id="tableau-resultat">
+    <table id="resultats">
       <thead>
-        <tr><th>Nom</th><th>Image</th><th>Fonction(s)</th></tr>
+        <tr><th>Fonction</th><th>Personnalité</th></tr>
       </thead>
       <tbody></tbody>
     </table>
   </div>
 
   <script>
-    // Le JavaScript complet avec recherche Wiki, affectation, et génération du tableau viendra ici
-    // Pour des raisons de place, je le découpe dans le prochain message :)
+    const fonctions = [
+      { nom: "Président de la République", personne: null },
+      { nom: "Premier Ministre", personne: null },
+      { nom: "Intérieur", personne: null },
+      { nom: "Transition écologique et solidaire", personne: null },
+      { nom: "Justice", personne: null },
+      { nom: "Europe et aff. étrangères", personne: null },
+      { nom: "Armées", personne: null },
+      { nom: "Cohésion des territoires", personne: null },
+      { nom: "Solidarités & Santé", personne: null },
+      { nom: "Economie & Finances", personne: null },
+      { nom: "Culture", personne: null },
+      { nom: "Travail", personne: null },
+      { nom: "Education Nationale", personne: null },
+      { nom: "Agriculture & Alimentation", personne: null },
+      { nom: "Action & Comptes Publics", personne: null },
+      { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
+      { nom: "Outre-mer", personne: null },
+      { nom: "Sports", personne: null },
+      { nom: "Secrétariat d'État Egalité H/F", personne: null },
+    ];
+
+    function afficherFonctions() {
+      const top = document.getElementById('fonctions');
+      const bottom = document.getElementById('fonctions-ministeres');
+      top.innerHTML = '';
+      bottom.innerHTML = '';
+
+      fonctions.forEach((f, index) => {
+        const div = document.createElement('div');
+        div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'info';
+
+        const titre = document.createElement('div');
+        titre.className = 'titre';
+        titre.textContent = f.nom;
+
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
+
+        if (f.personne) {
+          const a = document.createElement('a');
+          a.href = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
+          a.target = '_blank';
+          a.className = 'nom-personne';
+          a.textContent = f.personne.nom;
+
+          const btn = document.createElement('button');
+          btn.textContent = "Changer";
+          btn.onclick = () => { f.personne = null; afficherFonctions(); };
+
+          const img = document.createElement('img');
+          img.src = f.personne.image;
+          imageDiv.appendChild(img);
+
+          infoDiv.appendChild(titre);
+          infoDiv.appendChild(a);
+          infoDiv.appendChild(btn);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Ajouter un nom";
+
+          input.addEventListener('input', async () => {
+            const val = input.value.trim();
+            if (val.length < 2) return;
+            const suggestions = document.getElementById('suggestions');
+            suggestions.innerHTML = "";
+
+            const res = await fetch(`https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(val)}&gpslimit=5`);
+            const data = await res.json();
+            const pages = data.query ? Object.values(data.query.pages) : [];
+
+            pages.forEach(p => {
+              const li = document.createElement('li');
+              const img = document.createElement('img');
+              const span = document.createElement('span');
+
+              img.src = p.thumbnail ? p.thumbnail.source : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png';
+              span.textContent = p.title;
+
+              li.appendChild(img);
+              li.appendChild(span);
+              li.onclick = () => {
+                if (fonctions.some(x => x.personne?.nom === p.title)) return;
+                f.personne = { nom: p.title, image: img.src };
+                afficherFonctions();
+                suggestions.innerHTML = '';
+              };
+
+              suggestions.appendChild(li);
+            });
+
+            const rect = input.getBoundingClientRect();
+            suggestions.style.left = rect.left + "px";
+            suggestions.style.top = (window.scrollY + rect.bottom) + "px";
+            suggestions.style.width = rect.width + "px";
+          });
+
+          infoDiv.appendChild(titre);
+          infoDiv.appendChild(input);
+          imageDiv.innerHTML = "<span>?</span>";
+        }
+
+        div.appendChild(infoDiv);
+        div.appendChild(imageDiv);
+        if (index < 2) top.appendChild(div);
+        else bottom.appendChild(div);
+      });
+
+      mettreAJourTableau();
+    }
+
+    function mettreAJourTableau() {
+      const tbody = document.querySelector('#resultats tbody');
+      tbody.innerHTML = '';
+      fonctions.forEach(f => {
+        if (f.personne) {
+          const tr = document.createElement('tr');
+          const td1 = document.createElement('td');
+          const td2 = document.createElement('td');
+          td1.textContent = f.nom;
+          td2.textContent = f.personne.nom;
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    document.getElementById('valider').addEventListener('click', mettreAJourTableau);
+    document.addEventListener('click', e => {
+      const suggestions = document.getElementById('suggestions');
+      if (!suggestions.contains(e.target)) suggestions.innerHTML = '';
+    });
+
+    afficherFonctions();
   </script>
 </body>
 </html>
-
