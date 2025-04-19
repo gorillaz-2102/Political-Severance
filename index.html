@@ -4,17 +4,19 @@
   <meta charset="UTF-8">
   <title>Mon Gouvernement Idéal</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
+
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f7f7f7;
+      background-color: #f9f9f9;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 20px;
     }
 
     header {
@@ -23,91 +25,162 @@
     }
 
     header h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
+      font-size: 2.2em;
+      margin: 0;
     }
 
     header p {
-      font-size: 1em;
+      font-size: 0.95em;
       color: #666;
+      margin-top: 8px;
+    }
+
+    .separateur {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 40px 0 20px;
+    }
+
+    .separateur::before,
+    .separateur::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .separateur:not(:empty)::before {
+      margin-right: 10px;
+    }
+
+    .separateur:not(:empty)::after {
+      margin-left: 10px;
+    }
+
+    .separateur span {
+      color: #888;
+      font-weight: bold;
+      font-size: 0.9em;
+      text-transform: uppercase;
+    }
+
+    #fonctions, #fonctions-ministeres {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
     }
 
     .fonction {
-      position: relative;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: #fff;
-      padding: 16px;
-      border-radius: 10px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      margin-bottom: 16px;
-      border-left: 4px solid #4caf50;
+      height: 140px;
+      border: 1px solid #45a049;
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+    }
+
+    .fonction.large {
+      width: 360px;
+    }
+
+    .fonction.small {
+      width: 310px;
     }
 
     .info {
+      flex: 1;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      flex: 1;
-      margin-right: 15px;
+      justify-content: space-between;
     }
 
     .titre {
       font-weight: bold;
-      font-size: 1em;
-      margin-bottom: 8px;
+      font-size: 0.9em;
+    }
+
+    .nom-personne {
+      color: #002366;
+      font-size: 1.6em;
+      font-family: 'Roboto Condensed', sans-serif;
+      line-height: 1em;
+      margin: 6px 0;
+    }
+
+    .image-zone {
+      width: 120px;
+      height: 100%;
+      background-color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .image-zone img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     input[type="text"] {
-      padding: 10px;
-      font-size: 1em;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
-      box-sizing: border-box;
+      padding: 4px;
+      margin-bottom: 6px;
     }
 
-    .photo {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-color: #ddd;
-      background-size: cover;
-      background-position: center;
-      flex-shrink: 0;
+    button {
+      padding: 4px;
     }
 
-    .suggestions {
+    #suggestions {
       position: absolute;
       background: white;
       border: 1px solid #ccc;
       list-style: none;
       padding: 0;
-      margin: 4px 0 0;
+      margin: 0;
       z-index: 1000;
-      width: 100%;
-      max-height: 200px;
-      overflow-y: auto;
-      border-radius: 6px;
     }
 
-    .suggestions li {
+    #suggestions li {
       display: flex;
       align-items: center;
-      padding: 8px;
+      padding: 5px;
       cursor: pointer;
     }
 
-    .suggestions li:hover {
+    #suggestions li:hover {
       background-color: #f0f0f0;
     }
 
-    .suggestions img {
-      width: 32px;
-      height: 32px;
+    #suggestions img {
+      width: 30px;
+      height: 30px;
       object-fit: cover;
       border-radius: 50%;
       margin-right: 10px;
+    }
+
+    .stats {
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid #ccc;
+    }
+
+    .stats h2 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    .stats ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .stats ul li {
+      padding: 4px 0;
     }
   </style>
 </head>
@@ -117,126 +190,183 @@
       <h1>Mon Gouvernement Idéal</h1>
       <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
     </header>
+
+    <ul id="suggestions"></ul>
     <div id="fonctions"></div>
+    <div class="separateur"><span>Ministères</span></div>
+    <div id="fonctions-ministeres"></div>
+
+    <div class="stats">
+      <h2>Statistiques</h2>
+      <p id="compteur"></p>
+      <ul id="liste-noms"></ul>
+    </div>
   </div>
 
   <script>
     const fonctions = [
-      "Président de la République", "Premier Ministre", "Ministre de l'Intérieur",
-      "Ministre de la Justice", "Ministre de l'Écologie", "Ministre des Affaires Étrangères",
-      "Ministre des Armées", "Ministre de la Santé", "Ministre de l'Économie",
-      "Ministre de la Culture", "Ministre du Travail", "Ministre de l'Éducation",
-      "Ministre de l'Agriculture", "Ministre des Outre-Mer", "Ministre des Sports",
-      "Ministre de la Recherche", "Secrétaire d'État à l'Égalité"
+      { nom: "Président de la République", personne: null },
+      { nom: "Premier Ministre", personne: null },
+      { nom: "Intérieur", personne: null },
+      { nom: "Transition écologique et solidaire", personne: null },
+      { nom: "Justice", personne: null },
+      { nom: "Europe et aff. étrangères", personne: null },
+      { nom: "Armées", personne: null },
+      { nom: "Cohésion des territoires", personne: null },
+      { nom: "Solidarités & Santé", personne: null },
+      { nom: "Economie & Finances", personne: null },
+      { nom: "Culture", personne: null },
+      { nom: "Travail", personne: null },
+      { nom: "Education Nationale", personne: null },
+      { nom: "Agriculture & Alimentation", personne: null },
+      { nom: "Action & Comptes Publics", personne: null },
+      { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
+      { nom: "Outre-mer", personne: null },
+      { nom: "Sports", personne: null },
+      { nom: "Secrétariat d'État Egalité H/F", personne: null },
     ];
 
-    const container = document.getElementById('fonctions');
+    function updateStats() {
+      const total = fonctions.length;
+      const remplis = fonctions.filter(f => f.personne).length;
+      document.getElementById("compteur").textContent = `Postes pourvus : ${remplis} / ${total}`;
 
-    fonctions.forEach(fonction => {
-      const div = document.createElement('div');
-      div.className = 'fonction';
+      const liste = document.getElementById("liste-noms");
+      liste.innerHTML = '';
+      fonctions.forEach(f => {
+        if (f.personne) {
+          const li = document.createElement("li");
+          li.textContent = `${f.nom} : ${f.personne.nom}`;
+          liste.appendChild(li);
+        }
+      });
+    }
 
-      const infoDiv = document.createElement('div');
-      infoDiv.className = 'info';
+    function afficherFonctions() {
+      const containerTop = document.getElementById('fonctions');
+      const containerBottom = document.getElementById('fonctions-ministeres');
+      containerTop.innerHTML = '';
+      containerBottom.innerHTML = '';
 
-      const titre = document.createElement('div');
-      titre.className = 'titre';
-      titre.textContent = fonction;
+      fonctions.forEach((f, index) => {
+        const div = document.createElement('div');
+        div.className = 'fonction';
+        div.classList.add(index < 2 ? 'large' : 'small');
 
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = 'Nom de la personne';
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'info';
 
-      const suggestions = document.createElement('ul');
-      suggestions.className = 'suggestions';
-      suggestions.style.display = 'none';
+        const titre = document.createElement('div');
+        titre.className = 'titre';
+        titre.textContent = f.nom;
+        infoDiv.appendChild(titre);
 
-      const photo = document.createElement('div');
-      photo.className = 'photo';
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
 
-      input.addEventListener('input', async () => {
-        const query = input.value.trim();
-        suggestions.innerHTML = '';
-        suggestions.style.display = 'none';
-        if (query.length < 2) return;
+        if (f.personne) {
+          const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
+          const nomLink = document.createElement('a');
+          nomLink.className = 'nom-personne';
+          nomLink.href = wikiUrl;
+          nomLink.target = "_blank";
+          nomLink.textContent = f.personne.nom;
+          infoDiv.appendChild(nomLink);
 
-        const pages = await rechercherWikipedia(query);
-        if (pages.length > 0) {
-          pages.forEach(page => {
-            const li = document.createElement('li');
-            const img = document.createElement('img');
-            const name = document.createElement('span');
+          const boutonChanger = document.createElement('button');
+          boutonChanger.textContent = "Changer";
+          boutonChanger.onclick = () => {
+            f.personne = null;
+            afficherFonctions();
+          };
+          infoDiv.appendChild(boutonChanger);
 
-            name.textContent = page.title;
-            img.src = page.image;
-            li.appendChild(img);
-            li.appendChild(name);
+          const img = document.createElement('img');
+          img.src = f.personne.image;
+          img.alt = f.personne.nom;
+          imageDiv.appendChild(img);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Ajouter un nom";
 
-            li.onclick = () => {
-              input.value = page.title;
-              photo.style.backgroundImage = `url(${page.image})`;
-              suggestions.innerHTML = '';
-              suggestions.style.display = 'none';
-            };
+          const suggestions = document.getElementById('suggestions');
+          input.addEventListener("input", async () => {
+            const query = input.value.trim();
+            suggestions.innerHTML = '';
+            if (query.length < 2) return;
 
-            suggestions.appendChild(li);
+            async function fetchWiki(lang) {
+              const res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
+              const data = await res.json();
+              return data.query ? Object.values(data.query.pages) : [];
+            }
+
+            async function wikidataImage(qid) {
+              const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
+              const data = await res.json();
+              const claim = data.entities[qid]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+              if (!claim) return null;
+              const filename = claim.replace(/ /g, "_");
+              const hashBuffer = await crypto.subtle.digest("MD5", new TextEncoder().encode(filename));
+              const hashArray = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0'));
+              const hash = hashArray.join('');
+              return `https://upload.wikimedia.org/wikipedia/commons/${hash[0]}/${hash.slice(0,2)}/${filename}`;
+            }
+
+            const pages = await fetchWiki("fr") || await fetchWiki("en");
+
+            for (const page of pages) {
+              const li = document.createElement("li");
+              const span = document.createElement("span");
+              span.textContent = page.title;
+
+              let imgSrc = page.thumbnail?.source || "";
+              if (!imgSrc && page.pageprops?.wikibase_item) {
+                imgSrc = await wikidataImage(page.pageprops.wikibase_item);
+              }
+
+              const img = document.createElement("img");
+              img.src = imgSrc || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
+
+              li.appendChild(img);
+              li.appendChild(span);
+
+              li.onclick = () => {
+                f.personne = { nom: page.title, image: img.src };
+                suggestions.innerHTML = '';
+                afficherFonctions();
+              };
+
+              suggestions.appendChild(li);
+            }
+
+            const rect = input.getBoundingClientRect();
+            suggestions.style.left = rect.left + "px";
+            suggestions.style.top = (window.scrollY + rect.bottom) + "px";
+            suggestions.style.width = rect.width + "px";
           });
-          suggestions.style.display = 'block';
+
+          document.addEventListener("click", (e) => {
+            if (!suggestions.contains(e.target) && e.target !== input) {
+              suggestions.innerHTML = "";
+            }
+          });
+
+          infoDiv.appendChild(input);
+          imageDiv.innerHTML = "<span>?</span>";
         }
+
+        div.appendChild(infoDiv);
+        div.appendChild(imageDiv);
+        if (index < 2) containerTop.appendChild(div);
+        else containerBottom.appendChild(div);
       });
 
-      document.addEventListener('click', (e) => {
-        if (!div.contains(e.target)) {
-          suggestions.innerHTML = '';
-          suggestions.style.display = 'none';
-        }
-      });
-
-      infoDiv.appendChild(titre);
-      infoDiv.appendChild(input);
-      infoDiv.appendChild(suggestions);
-
-      div.appendChild(infoDiv);
-      div.appendChild(photo);
-      container.appendChild(div);
-    });
-
-    async function rechercherWikipedia(query) {
-      async function fetchFrom(lang) {
-        const url = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.query) return Object.values(data.query.pages);
-        return [];
-      }
-
-      const frResults = await fetchFrom('fr');
-      const pages = frResults.length > 0 ? frResults : await fetchFrom('en');
-
-      return Promise.all(pages.map(async page => {
-        let img = page.thumbnail ? page.thumbnail.source : "";
-        if (!img || img.includes("No_image")) {
-          const qid = page.pageprops?.wikibase_item;
-          if (qid) img = await getImageFromWikidata(qid);
-        }
-        if (!img) img = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
-        return { title: page.title, image: img };
-      }));
+      updateStats();
     }
 
-    async function getImageFromWikidata(qid) {
-      const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
-      const data = await res.json();
-      const claims = data.entities[qid].claims;
-      const imageClaim = claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-      if (!imageClaim) return null;
-
-      const filename = imageClaim.replace(/ /g, '_');
-      const md5 = await crypto.subtle.digest('MD5', new TextEncoder().encode(filename));
-      const hashArray = Array.from(new Uint8Array(md5)).map(b => b.toString(16).padStart(2, '0'));
-      const hash = hashArray.join('');
-      return `https://upload.wikimedia.org/wikipedia/commons/${hash[0]}/${hash.slice(0,2)}/${filename}`;
-    }
+    afficherFonctions();
   </script>
 </body>
 </html>
