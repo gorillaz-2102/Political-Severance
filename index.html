@@ -22,24 +22,28 @@
     header {
       text-align: center;
       margin-bottom: 40px;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     header h1 {
-      font-size: 2.2em;
       margin: 0;
+      font-size: 2em;
     }
 
     header p {
-      font-size: 0.95em;
+      font-size: 0.9em;
       color: #666;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .separateur {
       display: flex;
       align-items: center;
       text-align: center;
-      margin: 40px 0 20px;
+      margin: 30px 0;
     }
 
     .separateur::before,
@@ -64,7 +68,8 @@
       text-transform: uppercase;
     }
 
-    #fonctions, #fonctions-ministeres {
+    #fonctions,
+    #fonctions-ministeres {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -76,8 +81,8 @@
       height: 140px;
       border: 1px solid #45a049;
       border-radius: 8px;
-      background: white;
       overflow: hidden;
+      background: white;
     }
 
     .fonction.large {
@@ -91,6 +96,7 @@
     .info {
       flex: 1;
       padding: 10px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -104,9 +110,11 @@
     .nom-personne {
       color: #002366;
       font-size: 1.6em;
+      font-weight: bold;
       font-family: 'Roboto Condensed', sans-serif;
       line-height: 1em;
-      margin: 6px 0;
+      margin-top: 6px;
+      margin-bottom: 6px;
     }
 
     .image-zone {
@@ -116,6 +124,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background-color 0.3s ease;
       position: relative;
     }
 
@@ -123,64 +132,51 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0;
+      transform: translateX(15px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    input[type="text"] {
-      padding: 4px;
-      margin-bottom: 6px;
+    .image-zone.loaded img {
+      opacity: 1;
+      transform: translateX(0);
     }
 
-    button {
-      padding: 4px;
+    .image-zone span {
+      font-size: 24px;
+      color: #666;
+      transition: opacity 0.3s ease;
     }
 
-    #suggestions {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      z-index: 1000;
-    }
-
-    #suggestions li {
-      display: flex;
-      align-items: center;
-      padding: 5px;
+    #validate-btn {
+      display: block;
+      margin: 40px auto 20px;
+      padding: 10px 30px;
+      background-color: #002366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    #suggestions li:hover {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
       background-color: #f0f0f0;
-    }
-
-    #suggestions img {
-      width: 30px;
-      height: 30px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    .stats {
-      margin-top: 40px;
-      padding: 20px;
-      border-top: 1px solid #ccc;
-    }
-
-    .stats h2 {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-
-    .stats ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .stats ul li {
-      padding: 4px 0;
     }
   </style>
 </head>
@@ -191,16 +187,15 @@
       <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
     </header>
 
-    <ul id="suggestions"></ul>
     <div id="fonctions"></div>
+
     <div class="separateur"><span>Ministères</span></div>
     <div id="fonctions-ministeres"></div>
 
-    <div class="stats">
-      <h2>Statistiques</h2>
-      <p id="compteur"></p>
-      <ul id="liste-noms"></ul>
-    </div>
+    <button id="validate-btn">Valider mon gouvernement</button>
+
+    <div class="separateur"><span>Statistiques</span></div>
+    <div id="stats"></div>
   </div>
 
   <script>
@@ -213,34 +208,7 @@
       { nom: "Europe et aff. étrangères", personne: null },
       { nom: "Armées", personne: null },
       { nom: "Cohésion des territoires", personne: null },
-      { nom: "Solidarités & Santé", personne: null },
-      { nom: "Economie & Finances", personne: null },
-      { nom: "Culture", personne: null },
-      { nom: "Travail", personne: null },
-      { nom: "Education Nationale", personne: null },
-      { nom: "Agriculture & Alimentation", personne: null },
-      { nom: "Action & Comptes Publics", personne: null },
-      { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
-      { nom: "Outre-mer", personne: null },
-      { nom: "Sports", personne: null },
-      { nom: "Secrétariat d'État Egalité H/F", personne: null },
     ];
-
-    function updateStats() {
-      const total = fonctions.length;
-      const remplis = fonctions.filter(f => f.personne).length;
-      document.getElementById("compteur").textContent = `Postes pourvus : ${remplis} / ${total}`;
-
-      const liste = document.getElementById("liste-noms");
-      liste.innerHTML = '';
-      fonctions.forEach(f => {
-        if (f.personne) {
-          const li = document.createElement("li");
-          li.textContent = `${f.nom} : ${f.personne.nom}`;
-          liste.appendChild(li);
-        }
-      });
-    }
 
     function afficherFonctions() {
       const containerTop = document.getElementById('fonctions');
@@ -250,8 +218,7 @@
 
       fonctions.forEach((f, index) => {
         const div = document.createElement('div');
-        div.className = 'fonction';
-        div.classList.add(index < 2 ? 'large' : 'small');
+        div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
 
         const infoDiv = document.createElement('div');
         infoDiv.className = 'info';
@@ -265,11 +232,8 @@
         imageDiv.className = 'image-zone';
 
         if (f.personne) {
-          const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
-          const nomLink = document.createElement('a');
+          const nomLink = document.createElement('div');
           nomLink.className = 'nom-personne';
-          nomLink.href = wikiUrl;
-          nomLink.target = "_blank";
           nomLink.textContent = f.personne.nom;
           infoDiv.appendChild(nomLink);
 
@@ -278,95 +242,94 @@
           boutonChanger.onclick = () => {
             f.personne = null;
             afficherFonctions();
+            genererStats();
           };
           infoDiv.appendChild(boutonChanger);
 
-          const img = document.createElement('img');
-          img.src = f.personne.image;
-          img.alt = f.personne.nom;
-          imageDiv.appendChild(img);
+          if (f.personne.image) {
+            const img = document.createElement('img');
+            img.src = f.personne.image;
+            img.alt = f.personne.nom;
+            img.onload = () => imageDiv.classList.add('loaded');
+            imageDiv.innerHTML = "";
+            imageDiv.appendChild(img);
+          } else {
+            imageDiv.innerHTML = "<span>?</span>";
+          }
         } else {
           const input = document.createElement('input');
           input.type = 'text';
           input.placeholder = "Ajouter un nom";
-
-          const suggestions = document.getElementById('suggestions');
-          input.addEventListener("input", async () => {
-            const query = input.value.trim();
-            suggestions.innerHTML = '';
-            if (query.length < 2) return;
-
-            async function fetchWiki(lang) {
-              const res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(query)}&gpslimit=5`);
-              const data = await res.json();
-              return data.query ? Object.values(data.query.pages) : [];
+          input.onchange = () => {
+            const valeur = input.value.trim();
+            if (valeur && !fonctions.some(fn => fn.personne?.nom === valeur)) {
+              f.personne = { nom: valeur, image: null };
+              afficherFonctions();
+              genererStats();
             }
+          };
 
-            async function wikidataImage(qid) {
-              const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
-              const data = await res.json();
-              const claim = data.entities[qid]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-              if (!claim) return null;
-              const filename = claim.replace(/ /g, "_");
-              const hashBuffer = await crypto.subtle.digest("MD5", new TextEncoder().encode(filename));
-              const hashArray = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0'));
-              const hash = hashArray.join('');
-              return `https://upload.wikimedia.org/wikipedia/commons/${hash[0]}/${hash.slice(0,2)}/${filename}`;
-            }
+          const bouton = document.createElement('button');
+          bouton.textContent = "Changer";
+          bouton.disabled = true;
 
-            const pages = await fetchWiki("fr") || await fetchWiki("en");
-
-            for (const page of pages) {
-              const li = document.createElement("li");
-              const span = document.createElement("span");
-              span.textContent = page.title;
-
-              let imgSrc = page.thumbnail?.source || "";
-              if (!imgSrc && page.pageprops?.wikibase_item) {
-                imgSrc = await wikidataImage(page.pageprops.wikibase_item);
-              }
-
-              const img = document.createElement("img");
-              img.src = imgSrc || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png";
-
-              li.appendChild(img);
-              li.appendChild(span);
-
-              li.onclick = () => {
-                f.personne = { nom: page.title, image: img.src };
-                suggestions.innerHTML = '';
-                afficherFonctions();
-              };
-
-              suggestions.appendChild(li);
-            }
-
-            const rect = input.getBoundingClientRect();
-            suggestions.style.left = rect.left + "px";
-            suggestions.style.top = (window.scrollY + rect.bottom) + "px";
-            suggestions.style.width = rect.width + "px";
+          input.addEventListener('input', () => {
+            bouton.disabled = input.value.trim().length < 2;
           });
 
-          document.addEventListener("click", (e) => {
-            if (!suggestions.contains(e.target) && e.target !== input) {
-              suggestions.innerHTML = "";
-            }
-          });
+          bouton.onclick = () => input.onchange();
 
           infoDiv.appendChild(input);
+          infoDiv.appendChild(bouton);
           imageDiv.innerHTML = "<span>?</span>";
         }
 
         div.appendChild(infoDiv);
         div.appendChild(imageDiv);
-        if (index < 2) containerTop.appendChild(div);
-        else containerBottom.appendChild(div);
-      });
 
-      updateStats();
+        (index < 2 ? containerTop : containerBottom).appendChild(div);
+      });
     }
 
+    function genererStats() {
+      const statsDiv = document.getElementById('stats');
+      statsDiv.innerHTML = "";
+
+      const personnes = {};
+      fonctions.forEach(f => {
+        if (f.personne) {
+          if (!personnes[f.personne.nom]) personnes[f.personne.nom] = [];
+          personnes[f.personne.nom].push(f.nom);
+        }
+      });
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const trh = document.createElement('tr');
+      trh.innerHTML = "<th>Personnalité</th><th>Fonction(s)</th>";
+      thead.appendChild(trh);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      Object.entries(personnes).forEach(([nom, fonctions]) => {
+        const tr = document.createElement('tr');
+        const tdNom = document.createElement('td');
+        tdNom.textContent = nom;
+        const tdFonctions = document.createElement('td');
+        tdFonctions.textContent = fonctions.join(", ");
+        tr.appendChild(tdNom);
+        tr.appendChild(tdFonctions);
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      statsDiv.appendChild(table);
+    }
+
+    document.getElementById("validate-btn").addEventListener("click", genererStats);
+
     afficherFonctions();
+    genererStats();
   </script>
 </body>
 </html>
