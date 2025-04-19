@@ -16,41 +16,47 @@
       margin: 0 auto;
     }
     .fonction {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background-color: #fff;
-    }
-    .fonction.large {
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-    .fonction.small {
-      font-size: 1em;
-    }
-    .info {
-      flex: 1;
-      position: relative;
-    }
-    .image-zone {
-      width: 60px;
-      height: 60px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #eee;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .image-zone img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.fonction .titre {
+  font-weight: bold;
+  font-size: 1em;
+  margin-bottom: 6px;
+}
+
+.fonction .info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.fonction input[type="text"] {
+  padding: 8px;
+  font-size: 1em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fonction .image-zone {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #eee;
+}
+
     .suggestions {
       position: absolute;
       background-color: white;
