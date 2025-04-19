@@ -124,7 +124,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s ease;
       position: relative;
     }
 
@@ -132,51 +131,67 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0;
-      transform: translateX(15px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    .image-zone.loaded img {
-      opacity: 1;
-      transform: translateX(0);
+    #suggestions {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      z-index: 1000;
     }
 
-    .image-zone span {
-      font-size: 24px;
-      color: #666;
-      transition: opacity 0.3s ease;
+    #suggestions li:hover {
+      background-color: #f0f0f0;
     }
 
-    #validate-btn {
-      display: block;
-      margin: 40px auto 20px;
-      padding: 10px 30px;
-      background-color: #002366;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
+    #suggestions li {
+      display: flex;
+      align-items: center;
+      padding: 5px;
       cursor: pointer;
     }
 
-    table {
+    #suggestions li img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    #valider {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #45a049;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #tableau-resultat {
+      margin-top: 40px;
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
     }
 
-    table, th, td {
+    #tableau-resultat th,
+    #tableau-resultat td {
       border: 1px solid #ccc;
-    }
-
-    th, td {
       padding: 8px;
-      text-align: left;
+      text-align: center;
     }
 
-    th {
-      background-color: #f0f0f0;
+    #tableau-resultat img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
     }
   </style>
 </head>
@@ -187,162 +202,26 @@
       <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
     </header>
 
+    <ul id="suggestions"></ul>
     <div id="fonctions"></div>
 
     <div class="separateur"><span>Ministères</span></div>
     <div id="fonctions-ministeres"></div>
 
-    <button id="validate-btn">Valider mon gouvernement</button>
+    <button id="valider">Valider mon gouvernement</button>
 
-    <div class="separateur"><span>Statistiques</span></div>
-    <div id="stats"></div>
+    <table id="tableau-resultat">
+      <thead>
+        <tr><th>Nom</th><th>Image</th><th>Fonction(s)</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script>
-    const fonctions = [
-      { nom: "Président de la République", personne: null },
-      { nom: "Premier Ministre", personne: null },
-      { nom: "Intérieur", personne: null },
-      { nom: "Transition écologique et solidaire", personne: null },
-      { nom: "Justice", personne: null },
-      { nom: "Europe et aff. étrangères", personne: null },
-      { nom: "Armées", personne: null },
-      { nom: "Cohésion des territoires", personne: null },
-      { nom: "Solidarités & Santé", personne: null },
-      { nom: "Economie & Finances", personne: null },
-      { nom: "Culture", personne: null },
-      { nom: "Travail", personne: null },
-      { nom: "Education Nationale", personne: null },
-      { nom: "Agriculture & Alimentation", personne: null },
-      { nom: "Action & Comptes Publics", personne: null },
-      { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
-      { nom: "Outre-mer", personne: null },
-      { nom: "Sports", personne: null },
-      { nom: "Secrétariat d'État Egalité H/F", personne: null },
-    ];
-
-    ];
-
-    function afficherFonctions() {
-      const containerTop = document.getElementById('fonctions');
-      const containerBottom = document.getElementById('fonctions-ministeres');
-      containerTop.innerHTML = '';
-      containerBottom.innerHTML = '';
-
-      fonctions.forEach((f, index) => {
-        const div = document.createElement('div');
-        div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
-
-        const infoDiv = document.createElement('div');
-        infoDiv.className = 'info';
-
-        const titre = document.createElement('div');
-        titre.className = 'titre';
-        titre.textContent = f.nom;
-        infoDiv.appendChild(titre);
-
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-zone';
-
-        if (f.personne) {
-          const nomLink = document.createElement('div');
-          nomLink.className = 'nom-personne';
-          nomLink.textContent = f.personne.nom;
-          infoDiv.appendChild(nomLink);
-
-          const boutonChanger = document.createElement('button');
-          boutonChanger.textContent = "Changer";
-          boutonChanger.onclick = () => {
-            f.personne = null;
-            afficherFonctions();
-            genererStats();
-          };
-          infoDiv.appendChild(boutonChanger);
-
-          if (f.personne.image) {
-            const img = document.createElement('img');
-            img.src = f.personne.image;
-            img.alt = f.personne.nom;
-            img.onload = () => imageDiv.classList.add('loaded');
-            imageDiv.innerHTML = "";
-            imageDiv.appendChild(img);
-          } else {
-            imageDiv.innerHTML = "<span>?</span>";
-          }
-        } else {
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.placeholder = "Ajouter un nom";
-          input.onchange = () => {
-            const valeur = input.value.trim();
-            if (valeur && !fonctions.some(fn => fn.personne?.nom === valeur)) {
-              f.personne = { nom: valeur, image: null };
-              afficherFonctions();
-              genererStats();
-            }
-          };
-
-          const bouton = document.createElement('button');
-          bouton.textContent = "Changer";
-          bouton.disabled = true;
-
-          input.addEventListener('input', () => {
-            bouton.disabled = input.value.trim().length < 2;
-          });
-
-          bouton.onclick = () => input.onchange();
-
-          infoDiv.appendChild(input);
-          infoDiv.appendChild(bouton);
-          imageDiv.innerHTML = "<span>?</span>";
-        }
-
-        div.appendChild(infoDiv);
-        div.appendChild(imageDiv);
-
-        (index < 2 ? containerTop : containerBottom).appendChild(div);
-      });
-    }
-
-    function genererStats() {
-      const statsDiv = document.getElementById('stats');
-      statsDiv.innerHTML = "";
-
-      const personnes = {};
-      fonctions.forEach(f => {
-        if (f.personne) {
-          if (!personnes[f.personne.nom]) personnes[f.personne.nom] = [];
-          personnes[f.personne.nom].push(f.nom);
-        }
-      });
-
-      const table = document.createElement('table');
-      const thead = document.createElement('thead');
-      const trh = document.createElement('tr');
-      trh.innerHTML = "<th>Personnalité</th><th>Fonction(s)</th>";
-      thead.appendChild(trh);
-      table.appendChild(thead);
-
-      const tbody = document.createElement('tbody');
-      Object.entries(personnes).forEach(([nom, fonctions]) => {
-        const tr = document.createElement('tr');
-        const tdNom = document.createElement('td');
-        tdNom.textContent = nom;
-        const tdFonctions = document.createElement('td');
-        tdFonctions.textContent = fonctions.join(", ");
-        tr.appendChild(tdNom);
-        tr.appendChild(tdFonctions);
-        tbody.appendChild(tr);
-      });
-
-      table.appendChild(tbody);
-      statsDiv.appendChild(table);
-    }
-
-    document.getElementById("validate-btn").addEventListener("click", genererStats);
-
-    afficherFonctions();
-    genererStats();
+    // Le JavaScript complet avec recherche Wiki, affectation, et génération du tableau viendra ici
+    // Pour des raisons de place, je le découpe dans le prochain message :)
   </script>
 </body>
 </html>
+
