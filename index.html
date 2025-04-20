@@ -1,24 +1,25 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Mon Gouvernement Idéal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
-
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(to right, #0055A4 0%, #ffffff 33.33%, #EF4135 66.66%);
-  background-size: 100% 100%;
-}
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/1920px-Flag_of_France.svg.png') no-repeat center center fixed;
+      background-size: cover;
     }
 
     .container {
       max-width: 1000px;
       margin: 0 auto;
       padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
     }
 
     header {
@@ -26,15 +27,55 @@ body {
       margin-bottom: 40px;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 2em;
+    .fonction {
+      display: flex;
+      border: 1px solid #45a049;
+      border-radius: 8px;
+      margin: 10px;
+      background: white;
+      overflow: hidden;
+      height: 140px;
     }
 
-    header p {
+    .fonction.large { width: 360px; }
+    .fonction.small { width: 310px; }
+
+    .info {
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .titre {
+      font-weight: bold;
       font-size: 0.9em;
-      color: #666;
-      margin-top: 10px;
+    }
+
+    .nom-personne {
+      font-family: 'Roboto Condensed', sans-serif;
+      color: #002366;
+      font-size: 1.6em;
+    }
+
+    .image-zone {
+      width: 120px;
+      background-color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-zone img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    #fonctions, #fonctions-ministeres {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
     }
 
     .separateur {
@@ -44,147 +85,22 @@ body {
       margin: 30px 0;
     }
 
-    .separateur::before,
-    .separateur::after {
-      content: "";
-      flex: 1;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .separateur:not(:empty)::before {
-      margin-right: 10px;
-    }
-
-    .separateur:not(:empty)::after {
-      margin-left: 10px;
-    }
-
     .separateur span {
-      color: #888;
       font-weight: bold;
       font-size: 0.9em;
       text-transform: uppercase;
     }
 
-    #fonctions,
-    #fonctions-ministeres {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .fonction {
-      display: flex;
-      height: 140px;
-      border: 1px solid #45a049;
-      border-radius: 8px;
-      overflow: hidden;
-      background: white;
-    }
-
-    .fonction.large {
-      width: 360px;
-    }
-
-    .fonction.small {
-      width: 310px;
-    }
-
-    .info {
-      flex: 1;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .titre {
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-
-    .nom-personne {
-      color: #002366;
-      font-size: 1.6em;
-      font-weight: bold;
-      font-family: 'Roboto Condensed', sans-serif;
-      line-height: 1em;
-      margin-top: 6px;
-      margin-bottom: 6px;
-    }
-
-    .image-zone {
-      width: 120px;
-      height: 100%;
-      background-color: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .image-zone img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    #suggestions {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      z-index: 1000;
-    }
-
-    #suggestions li {
-      display: flex;
-      align-items: center;
-      padding: 5px;
-      cursor: pointer;
-    }
-
-    #suggestions li:hover {
-      background-color: #f0f0f0;
-    }
-
-    #suggestions li img {
-      width: 30px;
-      height: 30px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    #valider {
-      display: block;
+    #valider-btn {
       margin: 40px auto;
+      display: block;
       padding: 10px 20px;
-      font-size: 1em;
+      font-size: 1.1em;
       background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       cursor: pointer;
-    }
-
-    table {
-      margin-top: 40px;
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background: #f0f0f0;
     }
   </style>
 </head>
@@ -195,20 +111,11 @@ body {
       <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
     </header>
 
-    <ul id="suggestions"></ul>
     <div id="fonctions"></div>
-
     <div class="separateur"><span>Ministères</span></div>
     <div id="fonctions-ministeres"></div>
 
-    <button id="valider">Valider mon gouvernement</button>
-
-    <table id="resultats">
-      <thead>
-        <tr><th>Fonction</th><th>Personnalité</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <button id="valider-btn">Valider mon gouvernement</button>
   </div>
 
   <script>
@@ -216,141 +123,95 @@ body {
       { nom: "Président de la République", personne: null },
       { nom: "Premier Ministre", personne: null },
       { nom: "Intérieur", personne: null },
-      { nom: "Transition écologique et solidaire", personne: null },
+      { nom: "Transition écologique", personne: null },
       { nom: "Justice", personne: null },
-      { nom: "Europe et aff. étrangères", personne: null },
+      { nom: "Europe et Affaires étrangères", personne: null },
       { nom: "Armées", personne: null },
       { nom: "Cohésion des territoires", personne: null },
       { nom: "Solidarités & Santé", personne: null },
-      { nom: "Economie & Finances", personne: null },
+      { nom: "Économie & Finances", personne: null },
       { nom: "Culture", personne: null },
       { nom: "Travail", personne: null },
-      { nom: "Education Nationale", personne: null },
+      { nom: "Éducation Nationale", personne: null },
       { nom: "Agriculture & Alimentation", personne: null },
-      { nom: "Action & Comptes Publics", personne: null },
-      { nom: "Enseignement Sup., Recherche & Innov.", personne: null },
+      { nom: "Comptes Publics", personne: null },
+      { nom: "Enseignement Supérieur", personne: null },
       { nom: "Outre-mer", personne: null },
       { nom: "Sports", personne: null },
-      { nom: "Secrétariat d'État Egalité H/F", personne: null },
+      { nom: "Égalité H/F", personne: null },
     ];
 
     function afficherFonctions() {
-      const top = document.getElementById('fonctions');
-      const bottom = document.getElementById('fonctions-ministeres');
-      top.innerHTML = '';
-      bottom.innerHTML = '';
+      const containerTop = document.getElementById('fonctions');
+      const containerBottom = document.getElementById('fonctions-ministeres');
+      containerTop.innerHTML = '';
+      containerBottom.innerHTML = '';
 
       fonctions.forEach((f, index) => {
         const div = document.createElement('div');
-        div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
+        div.className = 'fonction';
+        div.classList.add(index < 2 ? 'large' : 'small');
 
         const infoDiv = document.createElement('div');
         infoDiv.className = 'info';
-
         const titre = document.createElement('div');
         titre.className = 'titre';
         titre.textContent = f.nom;
-
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-zone';
+        infoDiv.appendChild(titre);
 
         if (f.personne) {
-          const a = document.createElement('a');
-          a.href = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
-          a.target = '_blank';
-          a.className = 'nom-personne';
-          a.textContent = f.personne.nom;
-
-          const btn = document.createElement('button');
-          btn.textContent = "Changer";
-          btn.onclick = () => { f.personne = null; afficherFonctions(); };
-
-          const img = document.createElement('img');
-          img.src = f.personne.image;
-          imageDiv.appendChild(img);
-
-          infoDiv.appendChild(titre);
-          infoDiv.appendChild(a);
-          infoDiv.appendChild(btn);
+          const nom = document.createElement('div');
+          nom.className = 'nom-personne';
+          nom.textContent = f.personne.nom;
+          infoDiv.appendChild(nom);
         } else {
           const input = document.createElement('input');
           input.type = 'text';
-          input.placeholder = "Ajouter un nom";
+          input.placeholder = "Nom";
 
-          input.addEventListener('input', async () => {
-            const val = input.value.trim();
-            if (val.length < 2) return;
-            const suggestions = document.getElementById('suggestions');
-            suggestions.innerHTML = "";
-
-            const res = await fetch(`https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(val)}&gpslimit=5`);
-            const data = await res.json();
-            const pages = data.query ? Object.values(data.query.pages) : [];
-
-            pages.forEach(p => {
-              const li = document.createElement('li');
-              const img = document.createElement('img');
-              const span = document.createElement('span');
-
-              img.src = p.thumbnail ? p.thumbnail.source : 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/50px-No_image_3x4.svg.png';
-              span.textContent = p.title;
-
-              li.appendChild(img);
-              li.appendChild(span);
-              li.onclick = () => {
-                if (fonctions.some(x => x.personne?.nom === p.title)) return;
-                f.personne = { nom: p.title, image: img.src };
-                afficherFonctions();
-                suggestions.innerHTML = '';
-              };
-
-              suggestions.appendChild(li);
-            });
-
-            const rect = input.getBoundingClientRect();
-            suggestions.style.left = rect.left + "px";
-            suggestions.style.top = (window.scrollY + rect.bottom) + "px";
-            suggestions.style.width = rect.width + "px";
+          input.addEventListener('change', () => {
+            f.personne = {
+              nom: input.value,
+              image: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/No_image_3x4.svg'
+            };
+            afficherFonctions();
           });
 
-          infoDiv.appendChild(titre);
           infoDiv.appendChild(input);
+        }
+
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
+        if (f.personne && f.personne.image) {
+          const img = document.createElement('img');
+          img.src = f.personne.image;
+          imageDiv.appendChild(img);
+        } else {
           imageDiv.innerHTML = "<span>?</span>";
         }
 
         div.appendChild(infoDiv);
         div.appendChild(imageDiv);
-        if (index < 2) top.appendChild(div);
-        else bottom.appendChild(div);
-      });
 
-      mettreAJourTableau();
-    }
-
-    function mettreAJourTableau() {
-      const tbody = document.querySelector('#resultats tbody');
-      tbody.innerHTML = '';
-      fonctions.forEach(f => {
-        if (f.personne) {
-          const tr = document.createElement('tr');
-          const td1 = document.createElement('td');
-          const td2 = document.createElement('td');
-          td1.textContent = f.nom;
-          td2.textContent = f.personne.nom;
-          tr.appendChild(td1);
-          tr.appendChild(td2);
-          tbody.appendChild(tr);
+        if (index < 2) {
+          containerTop.appendChild(div);
+        } else {
+          containerBottom.appendChild(div);
         }
       });
     }
 
-    document.getElementById('valider').addEventListener('click', mettreAJourTableau);
-    document.addEventListener('click', e => {
-      const suggestions = document.getElementById('suggestions');
-      if (!suggestions.contains(e.target)) suggestions.innerHTML = '';
-    });
-
     afficherFonctions();
+
+    document.getElementById('valider-btn').addEventListener('click', () => {
+      const gouvernement = fonctions.map(f => ({
+        fonction: f.nom,
+        nom: f.personne ? f.personne.nom : "Aucun",
+        image: f.personne ? f.personne.image : ""
+      }));
+      localStorage.setItem('gouvernement', JSON.stringify(gouvernement));
+      window.location.href = 'tableau.html';
+    });
   </script>
 </body>
 </html>
