@@ -2,108 +2,132 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Tableau de Mon Gouvernement</title>
+  <title>Tableau de Gouvernement</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 20px;
-      background: linear-gradient(135deg, #f9f9f9, #dbeeff);
+      background: #f0f0f0;
     }
-
     h1 {
       text-align: center;
       color: #002366;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     th, td {
       border: 1px solid #ccc;
-      padding: 12px;
-      text-align: center;
+      padding: 10px;
+      text-align: left;
     }
-
     th {
       background-color: #002366;
       color: white;
     }
-
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: #f9f9f9;
     }
-
-    .back-button {
-      display: inline-block;
-      margin-top: 20px;
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .btn-retour {
+      display: block;
+      width: fit-content;
+      margin: 30px auto;
+      padding: 10px 20px;
+      font-size: 1em;
       background-color: #002366;
       color: white;
-      padding: 10px 20px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      text-decoration: none;
-      font-weight: bold;
     }
-
-    .back-button:hover {
+    .btn-retour:hover {
       background-color: #001a4d;
+    }
+    .classement {
+      margin-top: 50px;
+    }
+    .classement h2 {
+      color: #002366;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Composition de votre Gouvernement</h1>
+    <table id="tableauGouv">
+      <thead>
+        <tr>
+          <th>Fonction</th>
+          <th>Nom</th>
+          <th>Nombre d'attributions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Contenu injecté par JavaScript -->
+      </tbody>
+    </table>
 
-  <h1>Tableau des Nominations</h1>
+    <div class="classement">
+      <h2>Classement des personnalités les plus choisies</h2>
+      <table id="classement">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Nombre d'attributions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Contenu injecté par JavaScript -->
+        </tbody>
+      </table>
+    </div>
 
-  <table id="resultTable">
-    <thead>
-      <tr>
-        <th>Fonction</th>
-        <th>Nom</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Données injectées ici par JS -->
-    </tbody>
-  </table>
-
-  <div style="text-align: center;">
-    <a href="index.html" class="back-button">← Retour</a>
+    <button class="btn-retour" onclick="window.location.href='index.html'">Modifier mon gouvernement</button>
   </div>
 
   <script>
-    // Récupération des données du gouvernement
     const data = JSON.parse(localStorage.getItem("gouvernement")) || [];
 
-    const tbody = document.querySelector("#resultTable tbody");
+    const attributionCount = {};
+    data.forEach(entry => {
+      attributionCount[entry.nom] = (attributionCount[entry.nom] || 0) + 1;
+    });
 
-    if (data.length === 0) {
+    const tbody = document.querySelector("#tableauGouv tbody");
+    data.forEach(entry => {
       const tr = document.createElement("tr");
-      const td = document.createElement("td");
-      td.colSpan = 2;
-      td.textContent = "Aucune donnée reçue.";
-      tr.appendChild(td);
+      tr.innerHTML = `
+        <td>${entry.fonction}</td>
+        <td>${entry.nom}</td>
+        <td>${attributionCount[entry.nom]}</td>
+      `;
       tbody.appendChild(tr);
-    } else {
-      data.forEach(entry => {
-        const tr = document.createElement("tr");
+    });
 
-        const tdFonction = document.createElement("td");
-        tdFonction.textContent = entry.fonction;
-        tr.appendChild(tdFonction);
+    const classementBody = document.querySelector("#classement tbody");
+    const classementArray = Object.entries(attributionCount)
+      .sort((a, b) => b[1] - a[1]);
 
-        const tdNom = document.createElement("td");
-        tdNom.textContent = entry.nom || "—";
-        tr.appendChild(tdNom);
-
-        tbody.appendChild(tr);
-      });
-    }
+    classementArray.forEach(([nom, count]) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${nom}</td>
+        <td>${count}</td>
+      `;
+      classementBody.appendChild(tr);
+    });
   </script>
 </body>
 </html>
-
