@@ -2,151 +2,101 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Tableau des Résultats</title>
+  <title>Statistiques du Gouvernement</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 40px;
-      background: linear-gradient(to bottom, #0055A4 33%, #FFFFFF 33%, #FFFFFF 66%, #EF4135 66%);
+      background-color: #f4f4f4;
+      padding: 20px;
     }
-
-    .container {
-      background-color: #fff;
-      padding: 20px 40px;
-      border-radius: 8px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
     h1 {
       text-align: center;
-      margin-bottom: 20px;
-      font-size: 2em;
     }
-
     table {
-      width: 100%;
       border-collapse: collapse;
-      margin-top: 30px;
+      width: 100%;
+      margin: 20px 0;
+      background-color: white;
     }
-
     th, td {
-      border: 1px solid #ccc;
       padding: 10px;
       text-align: left;
+      border: 1px solid #ddd;
     }
-
     th {
       background-color: #0055A4;
       color: white;
     }
-
-    td img {
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    .classement {
-      margin-top: 40px;
-    }
-
-    .classement h2 {
-      margin-bottom: 10px;
-      font-size: 1.3em;
-      color: #333;
-    }
-
-    .classement ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .classement li {
-      margin: 5px 0;
-      font-size: 1em;
-    }
-
-    .btn-retour {
-      display: inline-block;
+    .return {
+      display: block;
+      text-align: center;
       margin-top: 30px;
-      background: #0055A4;
-      color: white;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 5px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Composition du Gouvernement</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Fonction</th>
-          <th>Personnalité</th>
-          <th>Photo</th>
-        </tr>
-      </thead>
-      <tbody id="tableau-body"></tbody>
-    </table>
+  <h1>Tableau des Ministres</h1>
 
-    <div class="classement">
-      <h2>Classement des personnalités les plus populaires</h2>
-      <ul id="classement-list"></ul>
-    </div>
+  <table id="table-fonctions">
+    <thead>
+      <tr>
+        <th>Fonction</th>
+        <th>Nom</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-    <a class="btn-retour" href="index.html">⟵ Retour</a>
-  </div>
+  <h2>Classement des plus populaires</h2>
+  <table id="table-populaires">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Nombre de fonctions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <a class="return" href="index.html">⬅ Retour à la sélection</a>
 
   <script>
-    const tableauBody = document.getElementById("tableau-body");
-    const classementList = document.getElementById("classement-list");
-    const data = JSON.parse(localStorage.getItem("monGouvernement")) || [];
+    const fonctions = JSON.parse(localStorage.getItem("monGouvernement")) || [];
 
-    const compteur = {};
+    const tbodyFonctions = document.querySelector("#table-fonctions tbody");
+    const tbodyPopulaires = document.querySelector("#table-populaires tbody");
 
-    data.forEach(fonction => {
-      if (!fonction.personne || !fonction.personne.nom) return;
+    const stats = {};
 
+    fonctions.forEach(f => {
       const tr = document.createElement("tr");
-
       const tdFonction = document.createElement("td");
-      tdFonction.textContent = fonction.nom;
-
       const tdNom = document.createElement("td");
-      tdNom.textContent = fonction.personne.nom;
-
-      const tdImage = document.createElement("td");
-      if (fonction.personne.image) {
-        const img = document.createElement("img");
-        img.src = fonction.personne.image;
-        tdImage.appendChild(img);
-      } else {
-        tdImage.textContent = "—";
-      }
-
+      tdFonction.textContent = f.nom;
+      tdNom.textContent = f.personne ? f.personne.nom : "";
       tr.appendChild(tdFonction);
       tr.appendChild(tdNom);
-      tr.appendChild(tdImage);
-      tableauBody.appendChild(tr);
+      tbodyFonctions.appendChild(tr);
 
-      const nom = fonction.personne.nom;
-      compteur[nom] = (compteur[nom] || 0) + 1;
+      if (f.personne && f.personne.nom) {
+        if (!stats[f.personne.nom]) stats[f.personne.nom] = 0;
+        stats[f.personne.nom]++;
+      }
     });
 
-    const classement = Object.entries(compteur)
-      .sort((a, b) => b[1] - a[1])
-      .map(([nom, count]) => `${nom} — ${count} sélection(s)`);
+    const sortedStats = Object.entries(stats).sort((a, b) => b[1] - a[1]);
 
-    classement.forEach(item => {
-      const li = document.createElement("li");
-      li.textContent = item;
-      classementList.appendChild(li);
+    sortedStats.forEach(([nom, count]) => {
+      const tr = document.createElement("tr");
+      const tdNom = document.createElement("td");
+      const tdCount = document.createElement("td");
+      tdNom.textContent = nom;
+      tdCount.textContent = count;
+      tr.appendChild(tdNom);
+      tr.appendChild(tdCount);
+      tbodyPopulaires.appendChild(tr);
     });
   </script>
 </body>
 </html>
+
