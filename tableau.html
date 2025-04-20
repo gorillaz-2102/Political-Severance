@@ -5,90 +5,105 @@
   <title>Tableau de Mon Gouvernement</title>
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #f4f4f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
       padding: 20px;
+      background: linear-gradient(135deg, #f9f9f9, #dbeeff);
     }
 
     h1 {
       text-align: center;
+      color: #002366;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
-      background: white;
+      margin-top: 30px;
     }
 
     th, td {
       border: 1px solid #ccc;
       padding: 12px;
-      text-align: left;
+      text-align: center;
     }
 
     th {
-      background-color: #e0e0e0;
+      background-color: #002366;
+      color: white;
     }
 
-    img {
-      height: 50px;
-      object-fit: cover;
-      border-radius: 8px;
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
     }
 
-    .back {
+    .back-button {
       display: inline-block;
       margin-top: 20px;
+      background-color: #002366;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
       text-decoration: none;
-      color: #0055cc;
+      font-weight: bold;
+    }
+
+    .back-button:hover {
+      background-color: #001a4d;
     }
   </style>
 </head>
 <body>
-  <h1>Tableau de Mon Gouvernement</h1>
-  <table id="tableau">
+
+  <h1>Tableau des Nominations</h1>
+
+  <table id="resultTable">
     <thead>
       <tr>
         <th>Fonction</th>
-        <th>Personnalité</th>
-        <th>Photo</th>
+        <th>Nom</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+      <!-- Données injectées ici par JS -->
+    </tbody>
   </table>
 
-  <a href="index.html" class="back">← Retour</a>
+  <div style="text-align: center;">
+    <a href="index.html" class="back-button">← Retour</a>
+  </div>
 
   <script>
-    const gouvernement = JSON.parse(localStorage.getItem('gouvernement') || '[]');
-    const tbody = document.querySelector('#tableau tbody');
+    // Récupération des données du gouvernement
+    const data = JSON.parse(localStorage.getItem("gouvernement")) || [];
 
-    gouvernement.forEach(entry => {
-      const tr = document.createElement('tr');
+    const tbody = document.querySelector("#resultTable tbody");
 
-      const tdFonction = document.createElement('td');
-      tdFonction.textContent = entry.fonction;
-
-      const tdNom = document.createElement('td');
-      tdNom.textContent = entry.nom;
-
-      const tdImage = document.createElement('td');
-      if (entry.image) {
-        const img = document.createElement('img');
-        img.src = entry.image;
-        img.alt = entry.nom;
-        tdImage.appendChild(img);
-      } else {
-        tdImage.textContent = "—";
-      }
-
-      tr.appendChild(tdFonction);
-      tr.appendChild(tdNom);
-      tr.appendChild(tdImage);
-
+    if (data.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 2;
+      td.textContent = "Aucune donnée reçue.";
+      tr.appendChild(td);
       tbody.appendChild(tr);
-    });
+    } else {
+      data.forEach(entry => {
+        const tr = document.createElement("tr");
+
+        const tdFonction = document.createElement("td");
+        tdFonction.textContent = entry.fonction;
+        tr.appendChild(tdFonction);
+
+        const tdNom = document.createElement("td");
+        tdNom.textContent = entry.nom || "—";
+        tr.appendChild(tdNom);
+
+        tbody.appendChild(tr);
+      });
+    }
   </script>
 </body>
 </html>
+
