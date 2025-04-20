@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de Mon Gouvernement</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e0e0e0;
+    }
+
+    img {
+      height: 50px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #0055cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tableau de Mon Gouvernement</h1>
+  <table id="tableau">
+    <thead>
+      <tr>
+        <th>Fonction</th>
+        <th>Personnalité</th>
+        <th>Photo</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <a href="index.html" class="back">← Retour</a>
+
+  <script>
+    const gouvernement = JSON.parse(localStorage.getItem('gouvernement') || '[]');
+    const tbody = document.querySelector('#tableau tbody');
+
+    gouvernement.forEach(entry => {
+      const tr = document.createElement('tr');
+
+      const tdFonction = document.createElement('td');
+      tdFonction.textContent = entry.fonction;
+
+      const tdNom = document.createElement('td');
+      tdNom.textContent = entry.nom;
+
+      const tdImage = document.createElement('td');
+      if (entry.image) {
+        const img = document.createElement('img');
+        img.src = entry.image;
+        img.alt = entry.nom;
+        tdImage.appendChild(img);
+      } else {
+        tdImage.textContent = "—";
+      }
+
+      tr.appendChild(tdFonction);
+      tr.appendChild(tdNom);
+      tr.appendChild(tdImage);
+
+      tbody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
