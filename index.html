@@ -23,14 +23,20 @@
       max-width: 1000px;
       margin: 0 auto;
       padding: 20px;
-      background-color: rgba(255,255,255,0.95);
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #f5f5f5;
+      border-radius: 0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
 
     header {
+      height: 250px;
+      background: white url('https://raw.githubusercontent.com/gorillaz-2102/Political-Severance/main/header_banner.jpg') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      margin-bottom: 40px;
     }
 
     header h1 {
@@ -38,12 +44,18 @@
       font-size: 2.5em;
       font-weight: bold;
       color: #002366;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 5px 15px;
+      border-radius: 8px;
     }
 
     header p {
       font-size: 1em;
       color: #555;
       margin-top: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 4px 10px;
+      border-radius: 6px;
     }
 
     .separateur {
@@ -80,24 +92,27 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
     }
 
     .fonction {
       display: flex;
-      border: 1px solid #ccc;
+      border: 1px solid #d3d4d7;
       border-radius: 8px;
       overflow: hidden;
       background: white;
-      height: 140px;
+      height: 160px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
 
     .fonction.large {
       width: 360px;
+      flex-direction: row;
     }
 
     .fonction.small {
-      width: 310px;
+      width: 300px;
+      flex-direction: row;
     }
 
     .info {
@@ -111,6 +126,7 @@
     .titre {
       font-weight: bold;
       font-size: 0.9em;
+      line-height: 1.2;
     }
 
     .nom-personne {
@@ -120,6 +136,7 @@
       font-family: 'Roboto Condensed', sans-serif;
       margin-top: 5px;
       margin-bottom: 5px;
+      line-height: 1.1;
     }
 
     .image-zone {
@@ -130,6 +147,8 @@
       justify-content: center;
       transition: background-color 0.3s ease;
       position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
     .image-zone img {
@@ -147,8 +166,8 @@
     }
 
     .image-zone span {
-      font-size: 24px;
-      color: #666;
+      font-size: 80px;
+      color: #ffffff;
     }
 
     input[type="text"] {
@@ -262,6 +281,9 @@
         const div = document.createElement('div');
         div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
 
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
+
         const infoDiv = document.createElement('div');
         infoDiv.className = 'info';
 
@@ -269,9 +291,6 @@
         titre.className = 'titre';
         titre.textContent = f.nom;
         infoDiv.appendChild(titre);
-
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-zone';
 
         if (f.personne) {
           const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
@@ -373,8 +392,8 @@
           imageDiv.innerHTML = "<span>?</span>";
         }
 
-        div.appendChild(infoDiv);
         div.appendChild(imageDiv);
+        div.appendChild(infoDiv);
 
         if (index < 2) {
           containerTop.appendChild(div);
@@ -398,5 +417,5 @@
 
     afficherFonctions();
   </script>
-      </Body>
+</body>
 </html>
