@@ -19,6 +19,12 @@
       background-repeat: no-repeat;
     }
 
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
     header {
       width: 100%;
       height: 250px;
@@ -31,8 +37,8 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      margin: 0;
-      padding: 0;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     header h1 {
@@ -40,22 +46,12 @@
       font-size: 2.7em;
       font-weight: bold;
       color: #002366;
-      background: none;
     }
 
     header p {
       font-size: 1em;
       color: #555;
       margin-top: 10px;
-      background: none;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     .marge-haut {
@@ -97,6 +93,10 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     #fonctions-ministeres {
@@ -147,7 +147,7 @@
 
     .nom-personne {
       color: #002366;
-      font-size: 1.6em; /* Augmenté */
+      font-size: 1.6em;
       font-weight: bold;
       font-family: 'Roboto Condensed', sans-serif;
       margin-top: 5px;
@@ -165,6 +165,9 @@
       overflow: hidden;
       order: -1;
       transition: background-color 0.3s ease;
+      font-weight: bold;
+      font-size: 5em;
+      color: #bbb;
     }
 
     .small .image-zone {
@@ -176,18 +179,13 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      transform: translateX(-15px); /* Vient de la gauche */
+      transform: translateX(-15px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .image-zone.loaded img {
       opacity: 1;
       transform: translateX(0);
-    }
-
-    .image-zone span {
-      font-size: 50px;
-      color: white;
     }
 
     input[type="text"] {
@@ -218,15 +216,15 @@
       z-index: 1000;
     }
 
-    #suggestions li:hover {
-      background-color: #f0f0f0;
-    }
-
     #suggestions li {
       display: flex;
       align-items: center;
       padding: 5px;
       cursor: pointer;
+    }
+
+    #suggestions li:hover {
+      background-color: #f0f0f0;
     }
 
     #suggestions li img {
@@ -239,7 +237,7 @@
 
     .valider-section {
       text-align: center;
-      margin-top: 40px;
+      margin: 40px 0;
     }
 
     .valider-section button {
@@ -249,12 +247,12 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Mon Gouvernement Idéal</h1>
-    <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
-  </header>
-
   <div class="container">
+    <header>
+      <h1>Mon Gouvernement Idéal</h1>
+      <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
+    </header>
+
     <div class="marge-haut" id="fonctions"></div>
 
     <div class="separateur"><span>Ministères</span></div>
@@ -314,6 +312,7 @@
 
         const imageDiv = document.createElement('div');
         imageDiv.className = 'image-zone';
+        imageDiv.innerHTML = "<span>?</span>";
 
         if (f.personne) {
           const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
@@ -338,8 +337,6 @@
             img.onload = () => imageDiv.classList.add('loaded');
             imageDiv.innerHTML = "";
             imageDiv.appendChild(img);
-          } else {
-            imageDiv.innerHTML = "<span>?</span>";
           }
         } else {
           const input = document.createElement('input');
@@ -412,7 +409,6 @@
 
           infoDiv.appendChild(input);
           infoDiv.appendChild(btn);
-          imageDiv.innerHTML = "<span>?</span>";
         }
 
         div.appendChild(imageDiv);
