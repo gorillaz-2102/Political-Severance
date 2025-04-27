@@ -19,24 +19,17 @@
       background-repeat: no-repeat;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-      border-radius: 0;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-
     header {
+      width: 100%;
       height: 250px;
-      background: white url('https://raw.githubusercontent.com/gorillaz-2102/Political-Severance/main/header_banner.jpg') no-repeat center center;
-      background-size: cover;
+      background: url('https://github.com/gorillaz-2102/Political-Severance/raw/main/header_banner.jpg') no-repeat center center;
+      background-size: contain;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
     header h1 {
@@ -44,18 +37,26 @@
       font-size: 2.5em;
       font-weight: bold;
       color: #002366;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 5px 15px;
-      border-radius: 8px;
+      background: none;
     }
 
     header p {
       font-size: 1em;
       color: #555;
       margin-top: 10px;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 4px 10px;
-      border-radius: 6px;
+      background: none;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .marge-haut {
+      margin-top: 30px;
     }
 
     .separateur {
@@ -92,27 +93,38 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 20px;
+    }
+
+    #fonctions-ministeres {
       gap: 15px;
     }
 
     .fonction {
       display: flex;
       border: 1px solid #d3d4d7;
-      border-radius: 8px;
-      overflow: hidden;
       background: white;
+      overflow: hidden;
       height: 160px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .fonction.large {
       width: 360px;
-      flex-direction: row;
     }
 
     .fonction.small {
-      width: 300px;
-      flex-direction: row;
+      width: 310px;
+    }
+
+    .fonction.president {
+      border: 3px solid;
+      border-image: linear-gradient(45deg, #FFD700, #FFA500) 1;
+    }
+
+    .fonction.premier-ministre {
+      border: 3px solid;
+      border-image: linear-gradient(45deg, #C0C0C0, #A9A9A9) 1;
     }
 
     .info {
@@ -126,7 +138,7 @@
     .titre {
       font-weight: bold;
       font-size: 0.9em;
-      line-height: 1.2;
+      line-height: 1.2em;
     }
 
     .nom-personne {
@@ -136,7 +148,7 @@
       font-family: 'Roboto Condensed', sans-serif;
       margin-top: 5px;
       margin-bottom: 5px;
-      line-height: 1.1;
+      line-height: 1.2em;
     }
 
     .image-zone {
@@ -147,8 +159,11 @@
       justify-content: center;
       transition: background-color 0.3s ease;
       position: relative;
-      overflow: hidden;
-      flex-shrink: 0;
+      order: -1;
+    }
+
+    .small .image-zone {
+      width: 100px;
     }
 
     .image-zone img {
@@ -166,8 +181,8 @@
     }
 
     .image-zone span {
-      font-size: 80px;
-      color: #ffffff;
+      font-size: 50px;
+      color: white;
     }
 
     input[type="text"] {
@@ -229,14 +244,13 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Mon Gouvernement Idéal</h1>
-      <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
-    </header>
+  <header>
+    <h1>Mon Gouvernement Idéal</h1>
+    <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
+  </header>
 
-    <ul id="suggestions"></ul>
-    <div id="fonctions"></div>
+  <div class="container">
+    <div class="marge-haut" id="fonctions"></div>
 
     <div class="separateur"><span>Ministères</span></div>
     <div id="fonctions-ministeres"></div>
@@ -245,6 +259,8 @@
       <button id="validerBtn">Valider mon gouvernement</button>
     </div>
   </div>
+
+  <ul id="suggestions"></ul>
 
   <script>
     const fonctions = [
@@ -280,9 +296,8 @@
       fonctions.forEach((f, index) => {
         const div = document.createElement('div');
         div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
-
-        const imageDiv = document.createElement('div');
-        imageDiv.className = 'image-zone';
+        if (index === 0) div.classList.add('president');
+        if (index === 1) div.classList.add('premier-ministre');
 
         const infoDiv = document.createElement('div');
         infoDiv.className = 'info';
@@ -291,6 +306,9 @@
         titre.className = 'titre';
         titre.textContent = f.nom;
         infoDiv.appendChild(titre);
+
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
 
         if (f.personne) {
           const wikiUrl = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
