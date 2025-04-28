@@ -91,14 +91,23 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       border-radius: 10px;
       position: relative;
+      flex-direction: row;
     }
-    .fonction.large { width: 360px; }
-    .fonction.small { width: 310px; border: 1px solid #d3d4d7; }
+    .fonction.large {
+      width: 360px;
+    }
+    .fonction.small {
+      width: 310px;
+      border: 1px solid #d3d4d7;
+    }
+    .fonction.president, .fonction.premier-ministre {
+      flex-direction: row-reverse;
+    }
     .fonction.president { border: 3px solid #e7d1ae; }
     .fonction.premier-ministre { border: 3px solid #b5b5b5; }
 
     .image-zone {
-      width: 80px;
+      width: 120px;
       background: #eee;
       display: flex;
       align-items: center;
@@ -127,7 +136,7 @@
       padding: 10px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: space-between;
     }
 
     .titre {
@@ -164,6 +173,23 @@
       font-size: 1.2em;
     }
     button:hover { background: #001a4d; }
+
+    .changer-btn {
+      background: #aaa;
+      font-size: 0.8em;
+      padding: 6px 10px;
+      border-radius: 4px;
+      margin-top: auto;
+      align-self: flex-end;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .changer-btn.active {
+      background: #002366;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     #suggestions {
       position: absolute;
       background: white;
@@ -262,40 +288,7 @@
   </style>
 </head>
 
-<body>
-<div class="container">
-  <header>
-    <h1>Mon Gouvernement Idéal</h1>
-    <p>Recrute ton équipe de rêve sans contraintes ni jugements</p>
-  </header>
-
-  <div class="marge-haut" id="fonctions"></div>
-
-  <div class="separateur"><span>Ministères</span></div>
-  <div id="fonctions-ministeres"></div>
-
-  <div class="valider-section">
-    <button id="validerBtn">Valider mon gouvernement</button>
-  </div>
-</div>
-
-<ul id="suggestions"></ul>
-
-<div id="overlay">
-  <div id="popup">
-    <div class="close-btn" id="closePopup">&times;</div>
-    <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Drapeau français" class="flag">
-    <h2>Merci Citoyen !</h2>
-    <p>Partage ce gouvernement idéal à tes amis</p>
-    <div class="link-container">
-      <textarea readonly id="generatedLink"></textarea>
-      <button id="copyLinkBtn">Copier</button>
-    </div>
-    <button id="restartBtn">Refaire un nouveau gouvernement</button>
-  </div>
-</div>
-
-<script>
+  <script>
 const fonctions = [
   { nom: "Président de la République", personne: null },
   { nom: "Premier Ministre", personne: null },
@@ -334,15 +327,14 @@ function afficherFonctions() {
 
     const contenu = document.createElement('div');
     contenu.style.display = 'flex';
+    contenu.style.flexDirection = (index < 2) ? 'row' : 'row';
 
     const imageDiv = document.createElement('div');
     imageDiv.className = 'image-zone';
-    imageDiv.style.flex = '0 0 80px';
     imageDiv.innerHTML = "<span>?</span>";
 
     const infoDiv = document.createElement('div');
     infoDiv.className = 'info';
-    infoDiv.style.flex = '1';
 
     const titre = document.createElement('div');
     titre.className = 'titre';
@@ -360,23 +352,27 @@ function afficherFonctions() {
       nomLink.target = "_blank";
       nomLink.textContent = f.personne.nom;
       infoDiv.appendChild(nomLink);
+    }
 
-      const btn = document.createElement('button');
-      btn.textContent = "Changer";
-      btn.onclick = () => {
-        f.personne = null;
-        afficherFonctions();
-      };
-      infoDiv.appendChild(btn);
+    const changerBtn = document.createElement('button');
+    changerBtn.className = 'changer-btn';
+    changerBtn.textContent = "Changer";
+    changerBtn.disabled = !f.personne;
+    changerBtn.onclick = () => {
+      f.personne = null;
+      afficherFonctions();
+    };
+    infoDiv.appendChild(changerBtn);
 
-      if (f.personne.image) {
-        const img = document.createElement('img');
-        img.src = f.personne.image;
-        img.onload = () => imageDiv.classList.add('loaded');
-        imageDiv.innerHTML = "";
-        imageDiv.appendChild(img);
-      }
-    } else {
+    if (f.personne && f.personne.image) {
+      const img = document.createElement('img');
+      img.src = f.personne.image;
+      img.onload = () => imageDiv.classList.add('loaded');
+      imageDiv.innerHTML = "";
+      imageDiv.appendChild(img);
+    }
+
+    if (!f.personne) {
       const input = document.createElement('input');
       input.type = 'text';
       input.placeholder = "Ajouter un nom";
@@ -407,7 +403,6 @@ function afficherFonctions() {
             const data = await res.json();
             const claims = data.entities[qid]?.claims;
             const imageClaim = claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-
             if (imageClaim) {
               const filename = imageClaim.replace(/ /g, '_');
               imgSrc = `https://commons.wikimedia.org/wiki/Special:FilePath/${filename}`;
@@ -440,7 +435,7 @@ function afficherFonctions() {
         }
       });
 
-      infoDiv.appendChild(input);
+      infoDiv.insertBefore(input, changerBtn);
     }
 
     contenu.appendChild(imageDiv);
@@ -459,7 +454,7 @@ document.getElementById("validerBtn").addEventListener("click", () => {
   const params = new URLSearchParams();
   fonctions.forEach(f => {
     if (f.personne) {
-      params.append(f.nom, f.personne.nom);
+      params.append(f.nom, JSON.stringify(f.personne));
     }
   });
   const url = `${location.origin}${location.pathname.replace("index.html", "tableau.html")}?${params.toString()}`;
@@ -478,10 +473,8 @@ document.getElementById('copyLinkBtn').addEventListener('click', () => {
 
   const copyButton = document.getElementById('copyLinkBtn');
   copyButton.textContent = "Lien copié !";
-  copyButton.style.backgroundColor = "#ccc";
   setTimeout(() => {
     copyButton.textContent = "Copier le lien";
-    copyButton.style.backgroundColor = "#eee";
   }, 2000);
 });
 
@@ -496,13 +489,16 @@ window.onload = () => {
   const params = new URLSearchParams(window.location.search);
   if (params.toString()) {
     fonctions.forEach(f => {
-      const nomParam = params.get(f.nom);
-      if (nomParam) {
-        f.personne = { nom: nomParam, image: null };
+      const personne = params.get(f.nom);
+      if (personne) {
+        try {
+          f.personne = JSON.parse(personne);
+        } catch (e) {
+          f.personne = { nom: personne, image: null };
+        }
       }
     });
     afficherFonctions();
   }
 };
 </script>
-  
