@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Mon Gouvernement Idéal</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Dancing+Script:wght@700&display=swap');
 
     * {
       box-sizing: border-box;
@@ -20,15 +20,18 @@
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1150px;
       margin: 0 auto;
       padding: 0;
       background-color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
       width: 100%;
-      height: 280px; /* +30px */
+      height: 280px;
       background-color: white;
       background-image: url('https://github.com/gorillaz-2102/Political-Severance/raw/main/header_banner.jpg');
       background-repeat: no-repeat;
@@ -44,12 +47,12 @@
 
     header h1 {
       margin: 0;
-      font-size: 2.7em;
+      font-size: 3em;
       font-weight: bold;
       color: #002366;
-      position: relative;
       font-family: 'Dancing Script', 'Apple Chancery', cursive;
-      top: -50px; /* Remonter les textes */
+      position: relative;
+      top: -50px;
     }
 
     header p {
@@ -57,7 +60,7 @@
       color: #555;
       margin-top: 10px;
       position: relative;
-      top: -50px; /* Remonter aussi */
+      top: -50px;
     }
 
     .marge-haut {
@@ -68,7 +71,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 40px 0 20px;
+      margin: 40px 40px 20px;
     }
 
     .separateur::before,
@@ -123,11 +126,13 @@
     .fonction.president {
       border: 3px solid;
       border-image: linear-gradient(45deg, #FFD700, #FFA500) 1;
+      border-radius: 10px;
     }
 
     .fonction.premier-ministre {
       border: 3px solid;
       border-image: linear-gradient(45deg, #C0C0C0, #A9A9A9) 1;
+      border-radius: 10px;
     }
 
     .info {
@@ -166,7 +171,7 @@
       transition: background-color 0.3s ease;
       font-weight: bold;
       font-size: 5em;
-      color: #dadada;
+      color: #dcdcdc;
     }
 
     .small .image-zone {
@@ -236,12 +241,22 @@
 
     .valider-section {
       text-align: center;
-      margin: 40px 0;
+      margin: 40px 0 60px;
     }
 
-    .valider-section button {
-      font-size: 1.1em;
-      padding: 10px 30px;
+    #shareLink {
+      width: 80%;
+      margin: 20px auto 60px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #shareLink textarea {
+      width: 100%;
+      height: 60px;
+      padding: 10px;
+      resize: none;
     }
   </style>
 </head>
@@ -259,6 +274,11 @@
 
     <div class="valider-section">
       <button id="validerBtn">Valider mon gouvernement</button>
+    </div>
+
+    <div id="shareLink" style="display:none;">
+      <h2>Partage ton gouvernement :</h2>
+      <textarea readonly></textarea>
     </div>
   </div>
 
@@ -341,14 +361,10 @@
           const input = document.createElement('input');
           input.type = 'text';
           input.placeholder = "Ajouter un nom";
-          const btn = document.createElement('button');
-          btn.textContent = "Rechercher";
-          btn.disabled = true;
 
           input.addEventListener("input", async () => {
             const query = input.value.trim();
             suggestions.innerHTML = "";
-            btn.disabled = true;
             if (query.length < 2) return;
 
             async function rechercher(lang, q) {
@@ -407,7 +423,6 @@
           });
 
           infoDiv.appendChild(input);
-          infoDiv.appendChild(btn);
         }
 
         div.appendChild(imageDiv);
@@ -422,15 +437,11 @@
     }
 
     document.getElementById("validerBtn").addEventListener("click", () => {
-      const gouvernement = fonctions
-        .filter(f => f.personne)
-        .map(f => ({
-          fonction: f.nom,
-          nom: f.personne.nom
-        }));
-
-      localStorage.setItem("gouvernement", JSON.stringify(gouvernement));
-      window.location.href = "tableau.html";
+      const gouvernement = fonctions.filter(f => f.personne).map(f => `${encodeURIComponent(f.nom)}=${encodeURIComponent(f.personne.nom)}`).join("&");
+      const url = `${location.origin}${location.pathname.replace("index.html", "tableau.html")}?${gouvernement}`;
+      const shareLink = document.getElementById("shareLink");
+      shareLink.style.display = "flex";
+      shareLink.querySelector("textarea").value = url;
     });
 
     afficherFonctions();
