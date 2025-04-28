@@ -513,6 +513,21 @@
       document.querySelector("#popup textarea").value = url;
     });
 
+document.getElementById('closePopup').addEventListener('click', () => {
+      document.getElementById('overlay').style.display = 'none';
+    });
+
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+      const textarea = document.getElementById('generatedLink');
+      textarea.select();
+      document.execCommand('copy');
+    });
+
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      document.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+      document.getElementById('overlay').style.display = 'none';
+    });
+    
     afficherFonctions();
   </script>
 </body>
