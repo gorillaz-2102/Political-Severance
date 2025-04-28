@@ -345,20 +345,164 @@
     </div>
   </div>
 
-  <script>
-    // (Ton script JS est conservé à 99% avec juste la gestion du modal)
-    const fonctions = [ /*... même liste ...*/ ];
+   <script>
+    const fonctions = [
+      { nom: "Président de la République", personne: null },
+      { nom: "Premier Ministre", personne: null },
+      { nom: "Intérieur", personne: null },
+      { nom: "Transition écologique et solidaire", personne: null },
+      { nom: "Justice", personne: null },
+      { nom: "Europe et affaires étrangères", personne: null },
+      { nom: "Armées", personne: null },
+      { nom: "Cohésion des territoires", personne: null },
+      { nom: "Solidarités & Santé", personne: null },
+      { nom: "Économie & Finances", personne: null },
+      { nom: "Culture", personne: null },
+      { nom: "Travail", personne: null },
+      { nom: "Éducation Nationale", personne: null },
+      { nom: "Agriculture & Alimentation", personne: null },
+      { nom: "Action & Comptes Publics", personne: null },
+      { nom: "Enseignement Sup., Recherche & Innovation", personne: null },
+      { nom: "Outre-mer", personne: null },
+      { nom: "Sports", personne: null },
+      { nom: "Égalité H/F", personne: null },
+    ];
 
     function afficherFonctions() {
-      // (identique à ton code précédent pour générer les blocs)
+      const containerTop = document.getElementById('fonctions');
+      const containerBottom = document.getElementById('fonctions-ministeres');
+      const suggestions = document.getElementById('suggestions');
+
+      containerTop.innerHTML = '';
+      containerBottom.innerHTML = '';
+
+      fonctions.forEach((f, index) => {
+        const div = document.createElement('div');
+        div.className = 'fonction ' + (index < 2 ? 'large' : 'small');
+        if (index === 0) div.classList.add('president');
+        if (index === 1) div.classList.add('premier-ministre');
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'info';
+
+        const titre = document.createElement('div');
+        titre.className = 'titre';
+        titre.textContent = f.nom;
+        infoDiv.appendChild(titre);
+
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'image-zone';
+        imageDiv.innerHTML = "<span>?</span>";
+
+        if (f.personne) {
+          const wikiUrl = https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))};
+          const nomLink = document.createElement('a');
+          nomLink.className = 'nom-personne';
+          nomLink.href = wikiUrl;
+          nomLink.target = "_blank";
+          nomLink.textContent = f.personne.nom;
+          infoDiv.appendChild(nomLink);
+
+          const btn = document.createElement('button');
+          btn.textContent = "Changer";
+          btn.onclick = () => {
+            f.personne = null;
+            afficherFonctions();
+          };
+          infoDiv.appendChild(btn);
+
+          if (f.personne.image) {
+            const img = document.createElement('img');
+            img.src = f.personne.image;
+            img.onload = () => imageDiv.classList.add('loaded');
+            imageDiv.innerHTML = "";
+            imageDiv.appendChild(img);
+          }
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = "Ajouter un nom";
+
+          input.addEventListener("input", async () => {
+            const query = input.value.trim();
+            suggestions.innerHTML = "";
+            if (query.length < 2) return;
+
+            async function rechercher(lang, q) {
+              const res = await fetch(https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(q)}&gpslimit=5);
+              const data = await res.json();
+              return data.query ? Object.values(data.query.pages) : [];
+            }
+
+            const frPages = await rechercher("fr", query);
+            const pages = frPages.length > 0 ? frPages : await rechercher("en", query);
+
+            for (const page of pages) {
+              const li = document.createElement("li");
+              const span = document.createElement("span");
+              span.textContent = page.title;
+
+              let imgSrc = page.thumbnail?.source || "";
+
+              if (!imgSrc && page.pageprops?.wikibase_item) {
+                const qid = page.pageprops.wikibase_item;
+                const res = await fetch(https://www.wikidata.org/wiki/Special:EntityData/${qid}.json);
+                const data = await res.json();
+                const claims = data.entities[qid]?.claims;
+                const imageClaim = claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+
+                if (imageClaim) {
+                  const filename = imageClaim.replace(/ /g, '_');
+                  imgSrc = https://commons.wikimedia.org/wiki/Special:FilePath/${filename};
+                }
+              }
+
+              const img = document.createElement("img");
+              img.src = imgSrc || "https://upload.wikimedia.org/wikipedia/commons/6/6c/No_image_3x4.svg";
+              li.appendChild(img);
+              li.appendChild(span);
+
+              li.onclick = () => {
+                f.personne = { nom: page.title, image: img.src };
+                suggestions.innerHTML = "";
+                afficherFonctions();
+              };
+
+              suggestions.appendChild(li);
+            }
+
+            const rect = input.getBoundingClientRect();
+            suggestions.style.left = rect.left + "px";
+            suggestions.style.top = (window.scrollY + rect.bottom) + "px";
+            suggestions.style.width = rect.width + "px";
+          });
+
+          document.addEventListener("click", (e) => {
+            if (!suggestions.contains(e.target) && e.target !== input) {
+              suggestions.innerHTML = "";
+            }
+          });
+
+          infoDiv.appendChild(input);
+        }
+
+        div.appendChild(imageDiv);
+        div.appendChild(infoDiv);
+
+        if (index < 2) {
+          containerTop.appendChild(div);
+        } else {
+          containerBottom.appendChild(div);
+        }
+      });
     }
 
     document.getElementById("validerBtn").addEventListener("click", () => {
-      const gouvernement = fonctions.filter(f => f.personne).map(f => `${encodeURIComponent(f.nom)}=${encodeURIComponent(f.personne.nom)}`).join("&");
-      const url = `${location.origin}${location.pathname.replace("index.html", "tableau.html")}?${gouvernement}`;
-      const overlay = document.getElementById("modal-overlay");
-      overlay.style.display = "flex";
-      overlay.querySelector("textarea").value = url;
+      const gouvernement = fonctions.filter(f => f.personne).map(f => ${encodeURIComponent(f.nom)}=${encodeURIComponent(f.personne.nom)}).join("&");
+      const url = ${location.origin}${location.pathname.replace("index.html", "tableau.html")}?${gouvernement};
+      const shareLink = document.getElementById("shareLink");
+      shareLink.style.display = "flex";
+      shareLink.querySelector("textarea").value = url;
     });
 
     afficherFonctions();
