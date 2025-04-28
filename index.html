@@ -379,12 +379,11 @@ function afficherFonctions() {
     }
 
     const changerBtn = document.createElement('button');
-    changerBtn.className = 'changer-btn';
-    changerBtn.textContent = "Changer";
-    changerBtn.disabled = !f.personne;
-    changerBtn.onclick = () => {
-      f.personne = null;
-      afficherFonctions();
+    changerBtn.className = 'changer-btn' + (f.personne ? ' active' : '');
+changerBtn.textContent = "Changer";
+changerBtn.onclick = () => {
+  f.personne = null;
+  afficherFonctions();
     };
     infoDiv.appendChild(changerBtn);
 
