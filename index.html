@@ -372,20 +372,20 @@ function afficherFonctions() {
     if (f.personne) {
       const nomLink = document.createElement('a');
       nomLink.className = 'nom-personne';
-      nomLink.href = `https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))}`;
+      nomLink.href = https://fr.wikipedia.org/wiki/${encodeURIComponent(f.personne.nom.replace(/ /g, "_"))};
       nomLink.target = "_blank";
       nomLink.textContent = f.personne.nom;
       infoDiv.appendChild(nomLink);
     }
 
+    const changerBtn = document.createElement('button');
     changerBtn.className = 'changer-btn';
-changerBtn.textContent = "Changer";
-changerBtn.disabled = !f.personne;
-changerBtn.onclick = () => {
-  f.personne = null;
-  afficherFonctions();
-};
-
+    changerBtn.textContent = "Changer";
+    changerBtn.disabled = !f.personne;
+    changerBtn.onclick = () => {
+      f.personne = null;
+      afficherFonctions();
+    };
     infoDiv.appendChild(changerBtn);
 
     if (f.personne && f.personne.image) {
@@ -406,7 +406,7 @@ changerBtn.onclick = () => {
         if (query.length < 2) return;
 
         async function rechercher(lang, q) {
-          const res = await fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(q)}&gpslimit=5`);
+          const res = await fetch(https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=pageimages|pageprops&piprop=thumbnail&pithumbsize=100&generator=prefixsearch&gpssearch=${encodeURIComponent(q)}&gpslimit=5);
           const data = await res.json();
           return data.query ? Object.values(data.query.pages) : [];
         }
@@ -423,13 +423,13 @@ changerBtn.onclick = () => {
 
           if (!imgSrc && page.pageprops?.wikibase_item) {
             const qid = page.pageprops.wikibase_item;
-            const res = await fetch(`https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`);
+            const res = await fetch(https://www.wikidata.org/wiki/Special:EntityData/${qid}.json);
             const data = await res.json();
             const claims = data.entities[qid]?.claims;
             const imageClaim = claims?.P18?.[0]?.mainsnak?.datavalue?.value;
             if (imageClaim) {
               const filename = imageClaim.replace(/ /g, '_');
-              imgSrc = `https://commons.wikimedia.org/wiki/Special:FilePath/${filename}`;
+              imgSrc = https://commons.wikimedia.org/wiki/Special:FilePath/${filename};
             }
           }
 
@@ -481,7 +481,7 @@ document.getElementById("validerBtn").addEventListener("click", () => {
       params.append(f.nom, JSON.stringify(f.personne));
     }
   });
-  const url = `${location.origin}${location.pathname.replace("index.html", "tableau.html")}?${params.toString()}`;
+  const url = ${location.origin}${location.pathname.replace("index.html", "tableau.html")}?${params.toString()};
   document.getElementById("overlay").style.display = "flex";
   document.getElementById("generatedLink").value = url;
 });
